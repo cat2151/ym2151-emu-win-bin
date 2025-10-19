@@ -1,0 +1,86 @@
+name: Build node-speaker with Static Linking
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Needed for creating releases
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    defaults:
+      run:
+        shell: msys2 {0}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: >-
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-portaudio
+          mingw-w64-x86_64-pkg-config
+          mingw-w64-x86_64-python
+          make
+          git
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install Node.js in MSYS2
+      run: |
+        pacman -S --noconfirm mingw-w64-x86_64-nodejs
+    
+    - name: Verify environment
+      run: |
+        echo "=== Environment Information ==="
+        echo "Node version: $(node --version)"
+        echo "NPM version: $(npm --version)"
+        echo "GCC version: $(gcc --version | head -n1)"
+        echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
+        pkg-config --list-all | grep -i portaudio || echo "PortAudio not found in pkg-config"
+        echo "=============================="
+    
+    - name: Make build script executable
+      run: chmod +x build-node-speaker.sh
+    
+    - name: Build node-speaker
+      run: ./build-node-speaker.sh
+    
+    - name: Verify build output
+      run: |
+        if [ -f output/binding.node ]; then
+          echo "Build successful!"
+          ls -lh output/
+          file output/binding.node
+          ldd output/binding.node || echo "ldd not available"
+        else
+          echo "Build failed - output not found"
+          exit 1
+        fi
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: node-speaker-static-mingw64
+        path: output/
+        retention-days: 30
+    
+    - name: Create release (on tag)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: output/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

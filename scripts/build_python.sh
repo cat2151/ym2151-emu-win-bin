@@ -2,41 +2,39 @@
 set -e
 
 echo "========================================="
-echo "Building Python CLI for Windows"
+echo "Building Python YM2151 Library for Windows"
 echo "========================================="
 
 cd src/python
 
-# Nuked-OPMのビルド（DLL作成）
+# Nuked-OPMのダウンロード
 if [ ! -d "vendor/nuked-opm" ]; then
     echo "Downloading Nuked-OPM..."
     mkdir -p vendor
     git clone https://github.com/nukeykt/Nuked-OPM.git vendor/nuked-opm
 fi
 
-# Windows環境の場合
-if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
-    echo "Building on Windows..."
-    
-    # Nuked-OPMのDLLビルド（必要な場合）
-    # gcc -shared -o ym2151/lib/nuked_opm.dll -static -static-libgcc -O3 vendor/nuked-opm/opm.c
-    
-    # PyInstallerでビルド
-    echo "Building Python binary with PyInstaller..."
-    pyinstaller --onefile \
-        --add-data "ym2151/lib/nuked_opm.dll;ym2151/lib" \
-        --name ym2151-emu \
-        main.py
+# Makefileがある場合はmakeを実行
+if [ -f "Makefile" ]; then
+    echo "Building DLL with Makefile..."
+    make
 else
-    echo "Cross-compilation from Linux is not supported for Python."
-    echo "Please use Windows environment or GitHub Actions with windows-latest."
-    exit 1
+    # 直接コンパイル
+    echo "Building DLL directly..."
+    x86_64-w64-mingw32-gcc -shared -o ym2151.dll \
+        -static-libgcc -static-libstdc++ \
+        -O3 \
+        vendor/nuked-opm/opm.c
 fi
 
 # 確認
 echo "Build completed!"
-ls -lh dist/ym2151-emu.exe
+ls -lh ym2151.dll
+
+# DLL依存の確認
+echo "Checking DLL dependencies..."
+x86_64-w64-mingw32-objdump -p ym2151.dll | grep -i "dll" || echo "✓ No mingw DLL dependencies (static build successful)"
 
 echo "========================================="
-echo "Python build finished successfully!"
+echo "Python library build finished successfully!"
 echo "========================================="

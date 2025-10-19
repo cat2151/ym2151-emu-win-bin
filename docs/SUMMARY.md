@@ -2,7 +2,7 @@
 
 ## 完了した作業
 
-このPRでは、YM2151エミュレータのWindows向けバイナリビルドリポジトリの初期設定を完了しました。
+このPRでは、YM2151エミュレータのWindows向け**ライブラリバイナリ**ビルドリポジトリの初期設定を完了しました。
 
 ### 1. リポジトリ構造の作成 ✅
 
@@ -13,7 +13,7 @@ ym2151-emu-win-bin/
 ├── .github/workflows/     # GitHub Actionsワークフロー
 ├── docs/                  # ドキュメント
 ├── scripts/               # ビルドスクリプト
-└── src/                   # ソースコード
+└── src/                   # ライブラリビルド用ソースコード
     ├── rust/
     ├── go/
     ├── python/
@@ -24,70 +24,63 @@ ym2151-emu-win-bin/
 
 **ファイル**: `docs/libraries.md`
 
-以下のライブラリを調査・リストアップしました：
+以下のライブラリをビルド対象としてリストアップしました：
 
 #### YM2151エミュレータ
 - **Nuked-OPM** (推奨)
   - サイクル精度の高いC実装
-  - 静的リンク対応
+  - 静的ライブラリ/動的ライブラリとしてビルド可能
   - すべての言語から利用可能
+
 - **libymfm** (代替案)
   - モダンなC++実装
   - 複数のYamahaチップをサポート
 
-#### 音声出力ライブラリ
-- **Rust**: cpal (WASAPI対応)
-- **Go**: oto (Ebitengine)
-- **Python**: sounddevice (PortAudio)
-- **TypeScript/Node.js**: speaker
+#### ビルド成果物
+- **Rust**: `libym2151.a` (静的ライブラリ)
+- **Go**: `libym2151.a` (静的ライブラリ、CGO用)
+- **Python**: `ym2151.dll` (動的ライブラリ、ctypes用)
+- **TypeScript/Node.js**: `ym2151.node` (Native Addon)
 
-### 3. 各言語の実装計画書 ✅
+### 3. 各言語のビルド計画書 ✅
 
-すべての言語について、詳細な実装計画書を作成しました：
+すべての言語について、詳細なライブラリビルド計画書を作成しました：
 
-#### Rust実装計画書 (`docs/implementation_plan_rust.md`)
-- FFIバインディングの設計
-- cpalを使った音声出力
-- 静的リンク設定（`target-feature=+crt-static`）
-- ビルドスクリプト（build.rs）の詳細
+#### Rust用ライブラリビルド計画書 (`docs/implementation_plan_rust.md`)
+- Cargo.tomlでのライブラリプロジェクト設定
+- build.rsでのNuked-OPM統合
+- 静的ライブラリ (`libym2151.a`) および動的ライブラリ (`ym2151.dll`) のビルド
+- FFIバインディングのエクスポート
 
-#### Go実装計画書 (`docs/implementation_plan_go.md`)
-- CGOバインディングの設計
-- otoを使った音声出力
-- 静的リンクフラグの設定
-- クロスコンパイル設定
+#### Go用ライブラリビルド計画書 (`docs/implementation_plan_go.md`)
+- Makefileでの静的ライブラリビルド
+- CGO経由でリンク可能な形式
+- `libym2151.a` の生成
 
-#### Python実装計画書 (`docs/implementation_plan_python.md`)
-- ctypesラッパーの設計
-- sounddeviceを使った音声出力
-- PyInstallerでのパッケージング
-- DLLの静的リンク
+#### Python用ライブラリビルド計画書 (`docs/implementation_plan_python.md`)
+- Makefileでの動的ライブラリビルド
+- ctypesでロード可能なDLL
+- `ym2151.dll` の生成
+- 静的リンク設定（mingw DLL依存なし）
 
-#### TypeScript/Node.js実装計画書 (`docs/implementation_plan_typescript.md`)
-- Node.js Native Addonの設計
-- speakerを使った音声出力
-- pkgでのパッケージング
-- binding.gypの設定
+#### TypeScript/Node.js用ライブラリビルド計画書 (`docs/implementation_plan_typescript.md`)
+- binding.gypでのNative Addonビルド
+- node-addon-apiを使用したN-API互換
+- `ym2151.node` の生成
 
 ### 4. ビルドスクリプト ✅
 
-各言語用のビルドスクリプトを作成しました：
+各言語用のライブラリビルドスクリプトを作成しました：
 
-- `scripts/build_rust.sh` - Rustバイナリのビルド
-- `scripts/build_go.sh` - Goバイナリのビルド
-- `scripts/build_python.sh` - Pythonバイナリのビルド
-- `scripts/build_typescript.sh` - TypeScriptバイナリのビルド
-- `scripts/build_all.sh` - すべてのバイナリを一括ビルド
+- `scripts/build_rust.sh` - Rust静的/動的ライブラリのビルド
+- `scripts/build_go.sh` - Go静的ライブラリのビルド
+- `scripts/build_python.sh` - Python DLLのビルド
+- `scripts/build_typescript.sh` - Node.js Native Addonのビルド
+- `scripts/build_all.sh` - すべてのライブラリを一括ビルド
 
-すべてのスクリプトは実行可能権限付きでコミットされています。
+すべてのスクリプトにDLL依存チェック機能を含み、mingw DLLへの依存がないことを確認します。
 
-### 5. GitHub Actions実装計画書とワークフロー ✅
-
-#### 実装計画書 (`docs/github_actions_plan.md`)
-- ワークフロー設計の詳細
-- 各ジョブの説明
-- セキュリティ考慮事項
-- 改善案とフェーズ2の計画
+### 5. GitHub Actionsワークフローと計画書 ✅
 
 #### ワークフローファイル (`.github/workflows/daily-build.yml`)
 - **トリガー**:
@@ -95,11 +88,11 @@ ym2151-emu-win-bin/
   - 手動実行（workflow_dispatch）
   - ビルドスクリプト変更時に実行
 - **ジョブ**:
-  1. `build-rust` - Rustバイナリのビルド（Ubuntu）
-  2. `build-go` - Goバイナリのビルド（Ubuntu）
-  3. `build-python` - Pythonバイナリのビルド（Windows）
-  4. `build-typescript` - TypeScriptバイナリのビルド（Windows）
-  5. `commit-binaries` - ビルド済みバイナリのコミット
+  1. `build-rust` - Rustライブラリのビルド（Ubuntu）
+  2. `build-go` - Goライブラリのビルド（Ubuntu）
+  3. `build-python` - Pythonライブラリのビルド（Ubuntu）
+  4. `build-typescript` - Node.js Native Addonのビルド（Windows）
+  5. `commit-binaries` - ビルド済みライブラリのコミット
 
 ### 6. その他の設定ファイル ✅
 
@@ -109,38 +102,38 @@ ym2151-emu-win-bin/
 ## 技術的なポイント
 
 ### 静的リンクの徹底
-すべてのバイナリは mingw DLL に依存しないように設定：
+すべてのライブラリは mingw DLL に依存しないように設定：
 
-- **Rust**: `-C target-feature=+crt-static`
-- **Go**: `-ldflags "-linkmode external -extldflags '-static'"`
-- **Python**: PyInstallerの`--onefile`で単一実行ファイル化
-- **TypeScript**: pkgで単一実行ファイル化
+- **Rust**: `-C target-feature=+crt-static` フラグを使用
+- **Go**: `-static-libgcc` フラグで静的ライブラリをビルド
+- **Python**: `-static-libgcc -static-libstdc++` フラグでDLLをビルド
+- **TypeScript**: MSVCまたはMinGWの静的リンク設定
 
-### クロスコンパイル戦略
+### ビルド成果物
 
-- **Rust/Go**: WSL2（Ubuntu）からminGW-w64でクロスコンパイル
-- **Python/TypeScript**: Windows環境でネイティブビルド（GitHub Actions）
+- **静的ライブラリ** (`.a`, `.lib`): Rust、Goで生成
+- **動的ライブラリ** (`.dll`): Python、Rustで生成
+- **Native Addon** (`.node`): TypeScript/Node.jsで生成
 
 ### ビルド環境
 
-- **WSL2**: Rust、Go
-- **Windows**: Python、TypeScript/Node.js（Native Addon対応）
+- **WSL2**: Rust、Go、Python（MinGWクロスコンパイル）
+- **Windows**: TypeScript/Node.js（Native Addon）
 
 ## 次のステップ
 
 このPRで基盤が整いましたので、次は実装フェーズに移ります：
 
-1. **Rust実装**: Nuked-OPMのFFIバインディングと音声出力
-2. **Go実装**: CGOバインディングと音声出力
-3. **Python実装**: ctypesラッパーと音声出力
-4. **TypeScript実装**: Native Addonと音声出力
-5. **テスト**: 各バイナリの動作確認
+1. **Rust用ライブラリ**: Nuked-OPMのFFIバインディングと静的ライブラリビルド
+2. **Go用ライブラリ**: 静的ライブラリのビルドとCGO対応
+3. **Python用ライブラリ**: DLLのビルドとctypes対応
+4. **TypeScript/Node.js用ライブラリ**: Native Addonのビルド
+5. **テスト**: 各ライブラリの動作確認と利用例の作成
 6. **GitHub Actions**: ワークフローの実行確認
 
 ## 参考リンク
 
 - [Nuked-OPM](https://github.com/nukeykt/Nuked-OPM)
-- [YM2151 emulator examples](https://github.com/cat2151/ym2151-emulator-examples)
 - [libymfm](https://github.com/aaronsgiles/ymfm)
 
 ## ファイル一覧
@@ -150,23 +143,25 @@ ym2151-emu-win-bin/
 .gitignore                           - Git除外設定
 README.md                            - プロジェクト説明
 docs/libraries.md                    - ライブラリリスト
-docs/implementation_plan_rust.md     - Rust実装計画
-docs/implementation_plan_go.md       - Go実装計画
-docs/implementation_plan_python.md   - Python実装計画
-docs/implementation_plan_typescript.md - TypeScript実装計画
-docs/github_actions_plan.md         - GitHub Actions計画
-scripts/build_rust.sh                - Rustビルドスクリプト
-scripts/build_go.sh                  - Goビルドスクリプト
-scripts/build_python.sh              - Pythonビルドスクリプト
-scripts/build_typescript.sh          - TypeScriptビルドスクリプト
+docs/implementation_plan_rust.md     - Rust用ライブラリビルド計画
+docs/implementation_plan_go.md       - Go用ライブラリビルド計画
+docs/implementation_plan_python.md   - Python用ライブラリビルド計画
+docs/implementation_plan_typescript.md - TypeScript用ライブラリビルド計画
+scripts/build_rust.sh                - Rustライブラリビルドスクリプト
+scripts/build_go.sh                  - Goライブラリビルドスクリプト
+scripts/build_python.sh              - Pythonライブラリビルドスクリプト
+scripts/build_typescript.sh          - TypeScriptライブラリビルドスクリプト
 scripts/build_all.sh                 - 一括ビルドスクリプト
-src/rust/                            - Rustソースディレクトリ（空）
-src/go/                              - Goソースディレクトリ（空）
-src/python/                          - Pythonソースディレクトリ（空）
-src/typescript_node/                 - TypeScriptソースディレクトリ（空）
+src/rust/                            - Rustライブラリビルド用ディレクトリ（空）
+src/go/                              - Goライブラリビルド用ディレクトリ（空）
+src/python/                          - Pythonライブラリビルド用ディレクトリ（空）
+src/typescript_node/                 - TypeScriptライブラリビルド用ディレクトリ（空）
 ```
 
 ## 総括
 
-このPRにより、YM2151エミュレータのWindows向けバイナリビルドリポジトリの基盤が完成しました。
-実装計画書とビルドスクリプトが揃っているため、次の実装フェーズに円滑に移行できます。
+このPRにより、YM2151エミュレータのWindows向け**ライブラリバイナリ**ビルドリポジトリの基盤が完成しました。
+ビルド計画書とスクリプトが揃っているため、次のライブラリ実装フェーズに円滑に移行できます。
+
+**重要**: このリポジトリの目的は、YM2151エミュレータ**ライブラリのバイナリ**（.a, .dll, .nodeなど）をビルドすることであり、
+これらのライブラリを利用したCLIやアプリケーションの実装は対象外です。

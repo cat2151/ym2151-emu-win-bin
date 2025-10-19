@@ -2,7 +2,7 @@
 set -e
 
 echo "========================================="
-echo "Building Go CLI for Windows"
+echo "Building Go YM2151 Library for Windows"
 echo "========================================="
 
 cd src/go
@@ -14,31 +14,26 @@ if [ ! -d "vendor/nuked-opm" ]; then
     git clone https://github.com/nukeykt/Nuked-OPM.git vendor/nuked-opm
 fi
 
-# 環境変数の設定
-export GOOS=windows
-export GOARCH=amd64
-export CGO_ENABLED=1
-export CC=x86_64-w64-mingw32-gcc
-export CXX=x86_64-w64-mingw32-g++
-
-# 依存関係の取得
-echo "Downloading dependencies..."
-go mod download
-
-# ビルド
-echo "Building Go binary..."
-go build -v \
-    -ldflags "-s -w -linkmode external -extldflags '-static'" \
-    -o ym2151-emu.exe
+# Makefileがある場合はmakeを実行
+if [ -f "Makefile" ]; then
+    echo "Building library with Makefile..."
+    make
+else
+    # 直接コンパイル
+    echo "Building library directly..."
+    x86_64-w64-mingw32-gcc -c -O3 -static-libgcc vendor/nuked-opm/opm.c -o opm.o
+    x86_64-w64-mingw32-ar rcs libym2151.a opm.o
+    rm -f opm.o
+fi
 
 # 確認
 echo "Build completed!"
-ls -lh ym2151-emu.exe
+ls -lh libym2151.a
 
-# DLL依存の確認
-echo "Checking DLL dependencies..."
-x86_64-w64-mingw32-objdump -p ym2151-emu.exe | grep -i "dll" || echo "✓ No DLL dependencies (static build successful)"
+# シンボルの確認
+echo "Checking symbols in library..."
+x86_64-w64-mingw32-nm libym2151.a | grep OPM | head -5
 
 echo "========================================="
-echo "Go build finished successfully!"
+echo "Go library build finished successfully!"
 echo "========================================="

@@ -1,20 +1,23 @@
-# Rust実装計画書
+# Rust用ライブラリビルド計画書
 
 ## 概要
 
-Rustで、Nuked-OPMライブラリを使用したYM2151エミュレータCLIを作成します。
-音声出力には`cpal`ライブラリを使用し、Windows向けに静的リンクされた実行ファイルを生成します。
+Nuked-OPMライブラリをWindows向けにビルドし、Rustプロジェクトから利用可能な静的ライブラリ (.a または .lib) を生成します。
+
+## ビルド成果物
+
+- **ファイル名**: `libym2151.a` (Linux/MinGW) または `ym2151.lib` (MSVC)
+- **形式**: 静的ライブラリ
+- **用途**: Rustプロジェクトの `Cargo.toml` で直接リンク可能
 
 ## アーキテクチャ
 
 ```
 src/rust/
-├── Cargo.toml          # プロジェクト設定
+├── Cargo.toml          # ライブラリプロジェクト設定
 ├── build.rs            # ビルドスクリプト（Nuked-OPMのコンパイル）
 ├── src/
-│   ├── main.rs         # エントリポイント
-│   ├── ym2151.rs       # YM2151エミュレータFFIバインディング
-│   └── audio.rs        # 音声出力ハンドラ
+│   └── lib.rs          # ライブラリエントリポイント（FFIバインディング）
 └── vendor/
     └── nuked-opm/      # Nuked-OPMソースコード (git submodule)
         ├── opm.h
@@ -27,14 +30,13 @@ src/rust/
 
 ```toml
 [package]
-name = "ym2151-emu"
+name = "ym2151"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-cpal = "0.15"
-anyhow = "1.0"
-clap = { version = "4.4", features = ["derive"] }
+[lib]
+name = "ym2151"
+crate-type = ["staticlib", "cdylib"]  # 静的と動的両方
 
 [build-dependencies]
 cc = "1.0"
@@ -52,7 +54,7 @@ strip = true
 
 ```bash
 cd src/rust
-cargo init --name ym2151-emu
+cargo init --lib --name ym2151
 ```
 
 ### 2. Nuked-OPMの統合
@@ -80,7 +82,7 @@ fn main() {
 
 ### 3. FFIバインディングの実装
 
-**src/ym2151.rs**:
+**src/lib.rs**:
 ```rust
 use std::os::raw::{c_void, c_uint};
 
@@ -95,120 +97,8 @@ extern "C" {
     pub fn OPM_Clock(chip: *mut OpmChip, buffer: *mut i16, frames: c_uint);
 }
 
-pub struct Ym2151 {
-    chip: Box<OpmChip>,
-}
-
-impl Ym2151 {
-    pub fn new() -> Self {
-        // チップの初期化実装
-        todo!()
-    }
-
-    pub fn reset(&mut self) {
-        unsafe { OPM_Reset(self.chip.as_mut()) }
-    }
-
-    pub fn write(&mut self, register: u8, value: u8) {
-        unsafe { OPM_Write(self.chip.as_mut(), register as c_uint, value as c_uint) }
-    }
-
-    pub fn generate_samples(&mut self, buffer: &mut [i16]) {
-        unsafe {
-            OPM_Clock(
-                self.chip.as_mut(),
-                buffer.as_mut_ptr(),
-                buffer.len() as c_uint / 2, // stereo
-            )
-        }
-    }
-}
-```
-
-### 4. 音声出力の実装
-
-**src/audio.rs**:
-```rust
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use cpal::{Device, Stream, StreamConfig};
-use std::sync::{Arc, Mutex};
-use anyhow::Result;
-
-pub struct AudioOutput {
-    stream: Stream,
-    device: Device,
-}
-
-impl AudioOutput {
-    pub fn new(sample_rate: u32) -> Result<Self> {
-        let host = cpal::default_host();
-        let device = host.default_output_device()
-            .ok_or_else(|| anyhow::anyhow!("No output device available"))?;
-
-        let config = StreamConfig {
-            channels: 2,
-            sample_rate: cpal::SampleRate(sample_rate),
-            buffer_size: cpal::BufferSize::Default,
-        };
-
-        // ストリーム作成実装
-        todo!()
-    }
-
-    pub fn play(&self) -> Result<()> {
-        self.stream.play()?;
-        Ok(())
-    }
-}
-```
-
-### 5. メイン実装
-
-**src/main.rs**:
-```rust
-use clap::Parser;
-use anyhow::Result;
-
-mod ym2151;
-mod audio;
-
-#[derive(Parser)]
-#[command(name = "ym2151-emu")]
-#[command(about = "YM2151 Emulator CLI", long_about = None)]
-struct Args {
-    /// Sample rate
-    #[arg(short, long, default_value_t = 44100)]
-    sample_rate: u32,
-
-    /// Duration in seconds
-    #[arg(short, long, default_value_t = 5)]
-    duration: u32,
-}
-
-fn main() -> Result<()> {
-    let args = Args::parse();
-
-    println!("YM2151 Emulator starting...");
-    println!("Sample rate: {} Hz", args.sample_rate);
-    println!("Duration: {} seconds", args.duration);
-
-    // YM2151の初期化
-    let mut ym2151 = ym2151::Ym2151::new();
-    ym2151.reset();
-
-    // デモ音声の設定（例: 440Hz正弦波）
-    // レジスタ設定の実装
-
-    // 音声出力の開始
-    let audio = audio::AudioOutput::new(args.sample_rate)?;
-    audio.play()?;
-
-    // 指定時間再生
-    std::thread::sleep(std::time::Duration::from_secs(args.duration as u64));
-
-    println!("Playback finished.");
-    Ok(())
-}
+// このライブラリは他の言語から利用されることを想定
+// Rustから使う場合のラッパーは別途実装可能
 ```
 
 ## ビルド方法
@@ -224,12 +114,13 @@ rustup target add x86_64-pc-windows-gnu
 sudo apt-get update
 sudo apt-get install -y mingw-w64
 
-# ビルド
+# ビルド（静的ライブラリ）
 cd src/rust
-cargo build --release --target x86_64-pc-windows-gnu
+cargo build --release --target x86_64-pc-windows-gnu --lib
 
-# 静的リンクの確認
-file target/x86_64-pc-windows-gnu/release/ym2151-emu.exe
+# 成果物の場所
+# target/x86_64-pc-windows-gnu/release/libym2151.a
+# target/x86_64-pc-windows-gnu/release/ym2151.dll (cdylibの場合)
 ```
 
 ### 静的リンク設定
@@ -238,48 +129,69 @@ file target/x86_64-pc-windows-gnu/release/ym2151-emu.exe
 ```toml
 [target.x86_64-pc-windows-gnu]
 rustflags = ["-C", "target-feature=+crt-static"]
+linker = "x86_64-w64-mingw32-gcc"
+ar = "x86_64-w64-mingw32-ar"
 ```
 
 ## テスト方法
 
-### WSL2からWindowsバイナリを実行
+### ライブラリの確認
 
 ```bash
-# Windows側で実行
-/mnt/c/Windows/System32/cmd.exe /c target/x86_64-pc-windows-gnu/release/ym2151-emu.exe --duration 3
+# ライブラリファイルの確認
+file target/x86_64-pc-windows-gnu/release/libym2151.a
+
+# シンボルの確認
+x86_64-w64-mingw32-nm target/x86_64-pc-windows-gnu/release/libym2151.a | grep OPM
 ```
 
-### 依存関係の確認
+### DLL依存の確認（cdylibの場合）
 
 ```bash
 # DLL依存の確認（mingw DLLがないことを確認）
-objdump -p target/x86_64-pc-windows-gnu/release/ym2151-emu.exe | grep -i "dll"
+x86_64-w64-mingw32-objdump -p target/x86_64-pc-windows-gnu/release/ym2151.dll | grep -i "dll"
 ```
+
+## 利用例
+
+### Rustプロジェクトから利用
+
+```toml
+# Cargo.toml
+[dependencies]
+ym2151 = { path = "../path/to/ym2151" }
+```
+
+### 他言語から利用
+
+生成された `libym2151.a` は以下のように利用可能：
+
+- **C/C++**: `gcc -o myapp myapp.c -L. -lym2151`
+- **Go**: CGOの `#cgo LDFLAGS: -L. -lym2151`
+- **Python**: ctypes経由でDLL版を利用
 
 ## 実装優先度
 
 1. **高**: 基本的なプロジェクト構造とビルドシステム
-2. **高**: Nuked-OPMのFFIバインディング
-3. **高**: 音声出力の基本実装
-4. **中**: デモ音声の実装（440Hz正弦波など）
-5. **中**: コマンドライン引数の処理
-6. **低**: エラーハンドリングの改善
-7. **低**: より複雑な音声パターンのサポート
+2. **高**: Nuked-OPMの静的ライブラリとしてのコンパイル
+3. **高**: FFIバインディングのエクスポート
+4. **中**: cdylib形式でのビルド（DLL）
+5. **低**: ドキュメントの充実
 
 ## 技術的課題と対策
 
-### 課題1: cpalのWindows静的リンク
-- **対策**: WASAPI バックエンドは動的リンクが不要。`cpal` の features を適切に設定
+### 課題1: 静的ライブラリのクロスコンパイル
+- **対策**: cc crateがminGWコンパイラを自動検出。明示的に指定も可能
 
-### 課題2: Nuked-OPMの初期化
-- **対策**: Nuked-OPMのヘッダファイルを詳細に読み、正しい初期化シーケンスを実装
+### 課題2: シンボルのエクスポート
+- **対策**: `extern "C"` でC互換のシンボルをエクスポート
 
-### 課題3: オーディオバッファの同期
-- **対策**: リングバッファを使用してYM2151の生成とオーディオ出力を非同期化
+### 課題3: mingw DLL依存
+- **対策**: `target-feature=+crt-static` で完全静的リンク
 
 ## 参考資料
 
 - Nuked-OPM: https://github.com/nukeykt/Nuked-OPM
-- cpal: https://docs.rs/cpal/
 - Rust FFI: https://doc.rust-lang.org/nomicon/ffi.html
 - cc crate: https://docs.rs/cc/
+- Cargo book (cdylib): https://doc.rust-lang.org/cargo/reference/cargo-targets.html#library

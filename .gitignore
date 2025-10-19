@@ -16,6 +16,45 @@ npm-debug.log*
 Thumbs.db
 
 # IDE files
+# Build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.o
+*.obj
+
+# Vendor dependencies
+src/*/vendor/
+
+# Language-specific
+## Rust
+target/
+Cargo.lock
+.cargo/
+
+## Go
+*.test
+go.sum
+
+## Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+## Node.js/TypeScript
+node_modules/
+package-lock.json
+*.tsbuildinfo
+
+# IDEs
 .vscode/
 .idea/
 *.swp
@@ -26,3 +65,10 @@ Thumbs.db
 tmp/
 temp/
 *.tmp
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+/tmp/
+*.log

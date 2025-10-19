@@ -8,10 +8,14 @@
 *.o
 *.obj
 
+# Vendor dependencies
+src/*/vendor/
+
 # Language-specific
 ## Rust
 target/
 Cargo.lock
+.cargo/
 
 ## Go
 *.test

@@ -67,10 +67,10 @@ git push origin v1.0.0
 2. **リポジトリをクローン**
    ```bash
    cd ~
-   git clone https://github.com/YOUR_USERNAME/ym2151-emu-win-bin.git
+   git clone https://github.com/<your-username>/ym2151-emu-win-bin.git
    cd ym2151-emu-win-bin
    ```
-   ※ `YOUR_USERNAME`を実際のGitHubユーザー名に置き換えてください
+   ※ `<your-username>`を実際のGitHubユーザー名に置き換えてください
 
 3. **ビルドスクリプトを実行**
    ```bash

@@ -2,7 +2,7 @@
 
 Windows用のnode-speakerライブラリビルド環境
 
-[日本語ドキュメント](QUICKSTART.ja.md) | [アーキテクチャ解説（日本語）](ARCHITECTURE.ja.md)
+[日本語ドキュメント](QUICKSTART.ja.md) | [アーキテクチャ解説（日本語）](ARCHITECTURE.ja.md) | [ライブラリ要件チェック](docs/LIBRARY_REQUIREMENT_CHECK.md) | [Library Requirements Check (EN)](docs/LIBRARY_REQUIREMENT_CHECK.en.md)
 
 ## 概要
 
@@ -260,6 +260,26 @@ const ym2151 = require('./binaries/typescript/ym2151.node');
 - [ ] Go用ライブラリビルド
 - [ ] Python用ライブラリビルド
 - [ ] TypeScript/Node.js用ライブラリビルド
+
+## ライブラリ提供要件チェック
+
+[ym2151-emulator-examples](https://github.com/cat2151/ym2151-emulator-examples)リポジトリが必要とするライブラリと、当リポジトリが提供できるライブラリの突き合わせチェックを実施しました。
+
+**結論**: ✅ **必要なライブラリを提供できています**
+
+詳細な比較結果とライブラリ一覧は以下のドキュメントを参照してください：
+- [日本語版レポート](docs/LIBRARY_REQUIREMENT_CHECK.md)
+- [English Report](docs/LIBRARY_REQUIREMENT_CHECK.en.md)
+
+### 提供可能なライブラリ
+
+| 言語 | ライブラリ形式 | エミュレータ | 静的リンク |
+|------|--------------|------------|----------|
+| Rust | 静的ライブラリ (`.a`) | Nuked-OPM | ✅ |
+| Go | 静的ライブラリ (`.a`) | Nuked-OPM | ✅ |
+| Python | 動的ライブラリ (`.dll`) | Nuked-OPM | ✅ |
+| TypeScript/Node.js | Native Addon (`.node`) | Nuked-OPM | ✅ |
+| Node.js | Native Addon (`.node`) | PortAudio | ✅ |
 
 ## ライセンス
 

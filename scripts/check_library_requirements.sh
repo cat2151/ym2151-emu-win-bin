@@ -19,8 +19,14 @@ if [ ! -f "$REPO_ROOT/docs/LIBRARY_REQUIREMENT_CHECK.md" ]; then
     exit 1
 fi
 
+if [ ! -f "$REPO_ROOT/docs/LIBRARY_REQUIREMENT_CHECK.en.md" ]; then
+    echo "⚠️  English report file not found!"
+fi
+
 echo "✅ Report found: docs/LIBRARY_REQUIREMENT_CHECK.md"
-echo "✅ Report found: docs/LIBRARY_REQUIREMENT_CHECK.en.md"
+if [ -f "$REPO_ROOT/docs/LIBRARY_REQUIREMENT_CHECK.en.md" ]; then
+    echo "✅ Report found: docs/LIBRARY_REQUIREMENT_CHECK.en.md"
+fi
 echo ""
 
 echo "========================================"
@@ -42,6 +48,7 @@ echo ""
 
 # Check source directories
 echo "Source Directories:"
+# Note: typescript_node is the actual directory name in this repo
 for dir in rust go python typescript_node; do
     src_dir="$REPO_ROOT/src/$dir"
     if [ -d "$src_dir" ]; then
@@ -94,6 +101,7 @@ if [ -d "/tmp/ym2151-emulator-examples" ]; then
         echo "  ✅ Python implementation: Requires Nuked-OPM DLL"
     fi
     if [ -f "/tmp/ym2151-emulator-examples/src/typescript_deno/README.md" ]; then
+        # Note: ym2151-emulator-examples uses "typescript_deno" while this repo uses "typescript_node"
         echo "  ✅ TypeScript/Node.js implementation: Requires libymfm.wasm + speaker"
     fi
 else

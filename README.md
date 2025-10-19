@@ -2,6 +2,8 @@
 
 Windows用のnode-speakerライブラリビルド環境
 
+[日本語ドキュメント](QUICKSTART.ja.md) | [アーキテクチャ解説（日本語）](ARCHITECTURE.ja.md)
+
 ## 概要
 
 このリポジトリは、Windows環境でnode-speakerライブラリをネイティブビルドするためのスクリプトとGitHub Actions ワークフローを提供します。

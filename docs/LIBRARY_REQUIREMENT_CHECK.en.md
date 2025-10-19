@@ -270,6 +270,22 @@ This repository (ym2151-emu-win-bin) is equipped to provide all **YM2151 emulato
 
 ---
 
+## Quick Check
+
+To quickly verify the summary of this report, run the following script:
+
+```bash
+bash scripts/check_library_requirements.sh
+```
+
+This script checks:
+- Report file existence
+- Build script existence
+- Source directory existence
+- List of available libraries
+
+---
+
 ## Reference Links
 
 - [ym2151-emulator-examples](https://github.com/cat2151/ym2151-emulator-examples)

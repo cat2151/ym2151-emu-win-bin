@@ -277,6 +277,22 @@ ym2151-emulator-examplesが必要とするYM2151エミュレータライブラ�
 
 ---
 
+## クイックチェック
+
+このレポートの概要を素早く確認するには、以下のスクリプトを実行してください：
+
+```bash
+bash scripts/check_library_requirements.sh
+```
+
+このスクリプトは以下を確認します：
+- レポートファイルの存在
+- ビルドスクリプトの存在
+- ソースディレクトリの存在
+- 提供可能なライブラリの一覧
+
+---
+
 ## 参考リンク
 
 - [ym2151-emulator-examples](https://github.com/cat2151/ym2151-emulator-examples)

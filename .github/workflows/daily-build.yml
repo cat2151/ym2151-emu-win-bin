@@ -7,12 +7,6 @@ on:
   
   # 手動実行を許可
   workflow_dispatch:
-  
-  # ビルドスクリプトの変更時にも実行
-  push:
-    paths:
-      - 'scripts/**'
-      - '.github/workflows/daily-build.yml'
 
 permissions:
   contents: read

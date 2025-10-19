@@ -58,10 +58,10 @@ cd src/rust && cargo read-manifest
 
 ```bash
 # package.jsonの検証
-cd src/typescript_node && cat package.json | python3 -m json.tool
+cd src/typescript_node && python3 -m json.tool package.json > /dev/null
 
 # binding.gypの検証
-cd src/typescript_node && cat binding.gyp | python3 -m json.tool
+cd src/typescript_node && python3 -m json.tool binding.gyp > /dev/null
 ```
 
 ## ビルドの実行

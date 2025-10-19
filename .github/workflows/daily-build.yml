@@ -14,6 +14,9 @@ on:
       - 'scripts/**'
       - '.github/workflows/daily-build.yml'
 
+permissions:
+  contents: read
+
 jobs:
   build-rust:
     name: Build Rust CLI
@@ -138,6 +141,8 @@ jobs:
     name: Commit Built Binaries
     runs-on: ubuntu-latest
     needs: [build-rust, build-go, build-python, build-typescript]
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout repository

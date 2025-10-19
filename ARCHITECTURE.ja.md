@@ -82,6 +82,15 @@ npm install --ignore-scripts
 node-gyp configure build --release
 ```
 
+**セキュリティのヒント**: プロダクション環境では、特定のバージョンやコミットにピン止めすることを推奨:
+```bash
+git clone --branch v0.5.4 https://github.com/TooTallNate/node-speaker.git
+# または
+git clone https://github.com/TooTallNate/node-speaker.git
+cd node-speaker
+git checkout <コミットハッシュ>
+```
+
 ### 4. 成果物の収集
 
 ビルドされた`binding.node`と必要なファイルを`output/`にコピー。

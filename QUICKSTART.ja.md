@@ -67,9 +67,10 @@ git push origin v1.0.0
 2. **リポジトリをクローン**
    ```bash
    cd ~
-   git clone https://github.com/cat2151/ym2151-emu-win-bin.git
+   git clone https://github.com/YOUR_USERNAME/ym2151-emu-win-bin.git
    cd ym2151-emu-win-bin
    ```
+   ※ `YOUR_USERNAME`を実際のGitHubユーザー名に置き換えてください
 
 3. **ビルドスクリプトを実行**
    ```bash
@@ -273,7 +274,7 @@ pacman -S mingw-w64-x86_64-portaudio
 ## サポート
 
 問題が解決しない場合:
-1. GitHubのIssuesで質問
+1. [GitHubのIssues](https://github.com/cat2151/ym2151-emu-win-bin/issues)で質問
 2. ビルドログを添付
 3. 使用環境（Windows, Node.js, MSYS2のバージョン）を記載
 

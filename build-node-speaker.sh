@@ -29,6 +29,9 @@ export npm_config_runtime=node
 # Clone node-speaker if not present
 if [ ! -d "node-speaker" ]; then
     echo "Cloning node-speaker..."
+    # Clone from the official repository
+    # Note: For production use, consider pinning to a specific commit or tag
+    # Example: git clone --branch v0.5.4 https://github.com/TooTallNate/node-speaker.git
     git clone https://github.com/TooTallNate/node-speaker.git
 fi
 

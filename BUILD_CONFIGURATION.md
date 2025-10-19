@@ -33,6 +33,24 @@ The built `binding.node` is specific to:
 
 **Important**: The built library must be used with the same major version of Node.js.
 
+## Version Pinning
+
+### Pinning node-speaker Version
+
+For production use, it's recommended to pin the node-speaker version in the build script:
+
+```bash
+# In build-node-speaker.sh, modify the clone command:
+git clone --branch v0.5.4 https://github.com/TooTallNate/node-speaker.git
+
+# Or clone and checkout a specific commit:
+git clone https://github.com/TooTallNate/node-speaker.git
+cd node-speaker
+git checkout <commit-hash>
+```
+
+This ensures reproducible builds and avoids unexpected changes.
+
 ## PortAudio Configuration
 
 The build uses MSYS2's mingw-w64-x86_64-portaudio package which includes:

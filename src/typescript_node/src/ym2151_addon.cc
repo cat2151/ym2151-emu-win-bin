@@ -28,7 +28,7 @@ public:
     }
 
 private:
-    opm_chip chip_;
+    opm_t chip_;
 
     Napi::Value Reset(const Napi::CallbackInfo& info) {
         OPM_Reset(&chip_);

@@ -201,13 +201,44 @@ export PATH=$PATH:/usr/local/go/bin
 
 ## GitHub Actions
 
-毎日午前0時（UTC）に自動的にすべてのライブラリをビルドし、`binaries/` ディレクトリにコミットします。
+各ライブラリは独立したワークフローでビルドされ、毎日午前0時（UTC）に自動実行されます。
+成功したビルドは自動的に `binaries/` ディレクトリにコミットされます。
 
-ワークフローの詳細は [docs/github_actions_plan.md](docs/github_actions_plan.md) を参照。
+### ワークフロー一覧
+
+- **Build Rust Library** (`.github/workflows/build-rust.yml`)
+  - 実行環境: ubuntu-latest
+  - 出力: `binaries/rust/libym2151.a`, `binaries/rust/ym2151.dll`
+
+- **Build Go Library** (`.github/workflows/build-go.yml`)
+  - 実行環境: ubuntu-latest
+  - 出力: `binaries/go/libym2151.a`
+
+- **Build Python Library** (`.github/workflows/build-python.yml`)
+  - 実行環境: ubuntu-latest
+  - 出力: `binaries/python/ym2151.dll`
+
+- **Build TypeScript/Node.js Library** (`.github/workflows/build-typescript.yml`)
+  - 実行環境: windows-latest
+  - 出力: `binaries/typescript/ym2151.node`
+
+### ワークフロー分割のメリット
+
+1. **障害の局所化**: 1つのライブラリが失敗しても、他のライブラリのビルドは継続されます
+2. **部分的な成功**: 成功したライブラリは自動的にコミットされます
+3. **デバッグの容易さ**: 問題のあるライブラリに集中できます
+4. **並列実行**: 各ライブラリが独立して並列ビルド可能です
+5. **リソース効率**: 失敗したワークフローのみ再実行できます
+
+詳細は [docs/automation_plan.md](docs/automation_plan.md) および [docs/workflow_failure_analysis.md](docs/workflow_failure_analysis.md) を参照。
 
 ### 手動実行
 
-GitHub Actionsページから「Daily Windows Binary Build」ワークフローを手動で実行できます。
+GitHub Actionsページから各ワークフローを個別に手動実行できます：
+- "Build Rust Library"
+- "Build Go Library"
+- "Build Python Library"
+- "Build TypeScript/Node.js Library"
 
 ## 実装計画
 

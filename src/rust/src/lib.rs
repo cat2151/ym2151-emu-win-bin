@@ -1,4 +1,4 @@
-use std::os::raw::{c_void, c_uint};
+use std::os::raw::c_uint;
 
 #[repr(C)]
 pub struct OpmChip {

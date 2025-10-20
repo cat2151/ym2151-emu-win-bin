@@ -1,0 +1,58 @@
+name: Build TypeScript Library
+
+on:
+  schedule:
+    # 毎日UTC 00:00に実行（JST 09:00）
+    - cron: '0 0 * * *'
+  
+  # 手動実行を許可
+  workflow_dispatch:
+  
+  # TypeScript関連ファイル変更時に実行
+  push:
+    paths:
+      - 'src/typescript_node/**'
+      - 'scripts/build_typescript.sh'
+      - '.github/workflows/build-typescript.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-typescript:
+    name: Build TypeScript/Node.js Library
+    runs-on: windows-latest  # Native Addonのビルドにはネイティブ環境が必要
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Build TypeScript library
+        shell: bash
+        run: |
+          chmod +x scripts/build_typescript.sh
+          ./scripts/build_typescript.sh
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ym2151-typescript
+          path: src/typescript_node/build/Release/ym2151.node
+          retention-days: 30
+      
+      - name: Commit binaries
+        if: success()
+        shell: bash
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          mkdir -p binaries/typescript
+          cp src/typescript_node/build/Release/ym2151.node binaries/typescript/
+          git add binaries/typescript/
+          git diff --staged --quiet || git commit -m "🤖 Update TypeScript library $(date +'%Y-%m-%d')"
+          git push

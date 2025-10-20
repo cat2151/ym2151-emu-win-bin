@@ -79,13 +79,14 @@
 
 各ワークフローで成功時に自動コミット:
 ```yaml
+# Template: 各ワークフローで以下のようなコミット処理を実装
 - name: Commit binaries
   if: success()
   run: |
     git config --local user.email "github-actions[bot]@users.noreply.github.com"
     git config --local user.name "github-actions[bot]"
-    mkdir -p binaries/[library]/
-    cp [build-output] binaries/[library]/
+    mkdir -p binaries/[library]/  # 例: binaries/rust/
+    cp [build-output] binaries/[library]/  # 例: src/rust/target/.../libym2151.a
     git add binaries/[library]/
     git diff --staged --quiet || git commit -m "🤖 Update [Library] $(date +'%Y-%m-%d')"
     git push
@@ -131,7 +132,7 @@
 ## 期待される効果
 
 ### ビルド成功率
-- **修正前**: 50% (2/4)
+- **修正前**: 50% (2/4が成功、2/4が失敗)
 - **修正後**: 100%期待（コードエラー修正済み）
 - **目標**: 95%以上を維持
 
@@ -245,10 +246,12 @@
 
 Issue要件をすべて充足し、以下を実現しました：
 
-1. **即座の問題解決**: コードエラーを修正し、ビルド成功率を50%→100%へ
+1. **即座の問題解決**: コードエラーを修正し、ビルド成功率を50%→100%へ改善（期待値）
 2. **自動化の実装**: 成功したライブラリの自動コミット
 3. **ワークフロー改善**: 4つの独立したワークフローに分割
 4. **包括的なドキュメント**: エラー分析、自動化計画、改善サマリーを作成
 5. **今後の計画**: 短期・中長期の自動化ロードマップを策定
+
+**注**: ビルド成功率100%は、特定されたコンパイルエラーを修正したことによる期待値です。今後、他の潜在的な問題が発生する可能性はありますが、ワークフローの分割により問題の早期発見と対処が容易になります。
 
 これにより、手動エラー対処の手間が大幅に削減され、開発効率と製品品質が向上することが期待されます。

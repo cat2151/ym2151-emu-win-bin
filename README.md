@@ -95,13 +95,21 @@ MIT License
 - [node-speaker](https://github.com/TooTallNate/node-speaker)
 - [PortAudio](http://www.portaudio.com/)
 - [MSYS2](https://www.msys2.org/)
-Windows向けYM2151エミュレータライブラリバイナリのビルドリポジトリ
+Windows向け公式Nuked-OPMライブラリバイナリのビルドリポジトリ
 
 ## 概要
 
-このリポジトリは、Yamaha YM2151 (OPM) サウンドチップのエミュレータライブラリを、複数のプログラミング言語（Rust、Go、Python、TypeScript/Node.js）から利用可能な形式でビルドし、Windows向けのライブラリバイナリを生成します。
+このリポジトリは、**公式Nuked-OPM** (https://github.com/nukeykt/Nuked-OPM) YM2151エミュレータを、複数のプログラミング言語（Rust、Go、Python、TypeScript/Node.js）から利用可能な形式でビルドし、Windows向けのライブラリバイナリを生成します。
+
+### 重要: ラッパーではなく公式APIを提供
+
+このリポジトリは**カスタムラッパーを提供しません**。すべてのライブラリは公式Nuked-OPMのAPIをそのまま提供します：
+- 関数名: `OPM_Reset()`, `OPM_Write()`, `OPM_Clock()`, `OPM_Read()` など
+- 構造体: `opm_t`
+- シグネチャ: 公式opm.hと完全に一致
 
 すべてのライブラリバイナリは以下の要件を満たします：
+- **公式API**: Nuked-OPMの公式APIをそのまま提供（ラッパーなし）
 - **静的リンク対応**: mingw DLLに依存しない `.a` (static library) または `.dll` (dynamic library) を生成
 - **言語バインディング対応**: Rust、Go、Python、TypeScript/Node.jsから利用可能
 - **クロスプラットフォームビルド**: WSL2からWindows向けにビルド可能
@@ -143,25 +151,33 @@ ym2151-emu-win-bin/
 
 このリポジトリでビルドするライブラリ：
 
-1. **Nuked-OPM** (推奨)
+1. **Nuked-OPM** (公式)
    - リポジトリ: https://github.com/nukeykt/Nuked-OPM
    - サイクル精度の高いC実装
+   - 公式APIをそのまま提供（カスタムラッパーなし）
    - 各言語から利用可能な形式でビルド
 
-2. **libymfm** (代替案)
-   - リポジトリ: https://github.com/aaronsgiles/ymfm
-   - モダンなC++実装
-
-### ビルド成果物
+### ビルド成果物と公式API
 
 各言語向けに以下の形式のライブラリバイナリを生成：
 
-- **Rust**: `.a` (static library) または `.lib` (Windows static library)
-- **Go**: `.a` (static library) - CGO経由で利用
-- **Python**: `.dll` (dynamic library) - ctypes経由で利用
+- **Rust**: `libnukedopm.a` (静的ライブラリ) / `nukedopm.dll` (動的ライブラリ)
+  - 公式OPM_*関数をエクスポート
+- **Go**: `libnukedopm.a` (静的ライブラリ) - CGO経由で利用
+  - 公式OPM_*関数をエクスポート
+- **Python**: `nukedopm.dll` (動的ライブラリ) - ctypes経由で利用
+  - 公式OPM_*関数をエクスポート
+  - 後方互換性のため `ym2151.dll` も提供
 - **TypeScript/Node.js**: `.dll` または `.node` (Native Addon)
 
-詳細は [docs/libraries.md](docs/libraries.md) を参照。
+**すべてのライブラリが提供する関数（公式Nuked-OPM API）**:
+- `void OPM_Reset(opm_t *chip)`
+- `void OPM_Write(opm_t *chip, uint32_t port, uint8_t data)`
+- `void OPM_Clock(opm_t *chip, int32_t *output, uint8_t *sh1, uint8_t *sh2, uint8_t *so)`
+- `uint8_t OPM_Read(opm_t *chip, uint32_t port)`
+- その他の公式API関数
+
+詳細は [docs/libraries.md](docs/libraries.md) および [docs/OFFICIAL_API_ANALYSIS.md](docs/OFFICIAL_API_ANALYSIS.md) を参照。
 
 ## ビルド方法
 
@@ -204,23 +220,29 @@ export PATH=$PATH:/usr/local/go/bin
 各ライブラリは独立したワークフローでビルドされ、毎日午前0時（UTC）に自動実行されます。
 成功したビルドは自動的に `binaries/` ディレクトリにコミットされます。
 
+**すべてのライブラリは公式Nuked-OPM APIを提供します**（カスタムラッパーなし）
+
 ### ワークフロー一覧
 
 - **Build Rust Library** (`.github/workflows/build-rust.yml`)
   - 実行環境: ubuntu-latest
-  - 出力: `binaries/rust/libym2151.a`, `binaries/rust/ym2151.dll`
+  - 出力: `binaries/rust/libnukedopm.a`, `binaries/rust/nukedopm.dll`
+  - API: 公式OPM_*関数
 
 - **Build Go Library** (`.github/workflows/build-go.yml`)
   - 実行環境: ubuntu-latest
-  - 出力: `binaries/go/libym2151.a`
+  - 出力: `binaries/go/libnukedopm.a`
+  - API: 公式OPM_*関数
 
 - **Build Python Library** (`.github/workflows/build-python.yml`)
   - 実行環境: ubuntu-latest
-  - 出力: `binaries/python/ym2151.dll`
+  - 出力: `binaries/python/nukedopm.dll`, `binaries/python/ym2151.dll` (legacy)
+  - API: 公式OPM_*関数
 
 - **Build TypeScript/Node.js Library** (`.github/workflows/build-typescript.yml`)
   - 実行環境: windows-latest
   - 出力: `binaries/typescript/ym2151.node`
+  - API: 公式OPM_*関数（またはNative Addon wrapper）
 
 ### ワークフロー分割のメリット
 

@@ -99,12 +99,14 @@ Windows向けYM2151エミュレータライブラリバイナリのビルドリ�
 
 ## 概要
 
-このリポジトリは、Yamaha YM2151 (OPM) サウンドチップのエミュレータライブラリを、複数のプログラミング言語（Rust、Go、Python、TypeScript/Node.js）から利用可能な形式でビルドし、Windows向けのライブラリバイナリを生成します。
+このリポジトリは、Yamaha YM2151 (OPM) サウンドチップのエミュレータライブラリを、複数のプログラミング言語（Rust、Go、Python）から利用可能な形式でビルドし、Windows向けのライブラリバイナリを生成します。
 
 すべてのライブラリバイナリは以下の要件を満たします：
 - **静的リンク対応**: mingw DLLに依存しない `.a` (static library) または `.dll` (dynamic library) を生成
-- **言語バインディング対応**: Rust、Go、Python、TypeScript/Node.jsから利用可能
+- **言語バインディング対応**: Rust、Go、Pythonから利用可能
 - **クロスプラットフォームビルド**: WSL2からWindows向けにビルド可能
+
+**注意**: TypeScript/Node.js向けYM2151エミュレータは、libymfm.wasmがnpmパッケージとして提供されているため、このリポジトリでのビルドは不要です。
 
 ## ディレクトリ構造
 

@@ -112,10 +112,6 @@ This repository is equipped to provide all major libraries required by ym2151-em
 - ⚠️ **libymfm.wasm**: Not directly provided
   - libymfm.wasm is distributed as npm package, no build needed
   - Can be used directly from npm by ym2151-emulator-examples
-- ✅ **Alternative: Nuked-OPM Native Addon**: Can be provided
-  - Build configuration in `src/typescript_node/`
-  - Can be built with `scripts/build_typescript.sh`
-  - Output: `ym2151.node` (Native Addon)
 - ✅ **node-speaker Related**: Separately provided
   - Repository includes `build-node-speaker.sh`
   - Provides Windows build environment for node-speaker
@@ -124,7 +120,7 @@ This repository is equipped to provide all major libraries required by ym2151-em
 #### Assessment
 **✅ Well Supported**: 
 - libymfm.wasm is an npm package, so provision from this repository is not necessary
-- Can provide Nuked-OPM-based Native Addon as alternative
+- ym2151-emulator-examples uses libymfm.wasm, allowing users to utilize it directly from npm without complex builds
 - Also provides build environment for node-speaker (PortAudio)
 
 ---
@@ -138,8 +134,9 @@ This repository is equipped to provide all major libraries required by ym2151-em
 | Rust | Static Library | `libym2151.a` | Nuked-OPM | ✅ | `scripts/build_rust.sh` |
 | Go | Static Library | `libym2151.a` | Nuked-OPM | ✅ | `scripts/build_go.sh` |
 | Python | Dynamic Library | `ym2151.dll` | Nuked-OPM | ✅ | `scripts/build_python.sh` |
-| TypeScript/Node.js | Native Addon | `ym2151.node` | Nuked-OPM | ✅ | `scripts/build_typescript.sh` |
 | Node.js | Native Addon | `binding.node` | - (PortAudio) | ✅ | `build-node-speaker.sh` |
+
+**Note**: TypeScript/Node.js YM2151 emulator uses libymfm.wasm from npm package, so building in this repository is not necessary.
 
 ### Libraries Required by ym2151-emulator-examples
 

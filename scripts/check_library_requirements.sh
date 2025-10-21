@@ -36,7 +36,7 @@ echo ""
 
 # Check if build scripts exist
 echo "Build Scripts:"
-for lang in rust go python typescript; do
+for lang in rust go python; do
     script="$REPO_ROOT/scripts/build_${lang}.sh"
     if [ -f "$script" ]; then
         echo "  ✅ ${lang}: $(basename $script) exists"
@@ -48,8 +48,7 @@ echo ""
 
 # Check source directories
 echo "Source Directories:"
-# Note: typescript_node is the actual directory name in this repo
-for dir in rust go python typescript_node; do
+for dir in rust go python; do
     src_dir="$REPO_ROOT/src/$dir"
     if [ -d "$src_dir" ]; then
         echo "  ✅ src/${dir}/ exists"
@@ -69,8 +68,8 @@ echo "Provided Libraries:"
 echo "  ✅ Rust:       Static library (.a) - Nuked-OPM"
 echo "  ✅ Go:         Static library (.a) - Nuked-OPM"
 echo "  ✅ Python:     Dynamic library (.dll) - Nuked-OPM"
-echo "  ✅ TypeScript: Native Addon (.node) - Nuked-OPM"
-echo "  ✅ Node.js:    Native Addon (.node) - node-speaker/PortAudio"
+echo ""
+echo "Note: TypeScript/Node.js uses libymfm.wasm from npm (no build needed)"
 echo ""
 echo "For detailed analysis, see:"
 echo "  - docs/LIBRARY_REQUIREMENT_CHECK.md (Japanese)"
@@ -101,8 +100,7 @@ if [ -d "/tmp/ym2151-emulator-examples" ]; then
         echo "  ✅ Python implementation: Requires Nuked-OPM DLL"
     fi
     if [ -f "/tmp/ym2151-emulator-examples/src/typescript_deno/README.md" ]; then
-        # Note: ym2151-emulator-examples uses "typescript_deno" while this repo uses "typescript_node"
-        echo "  ✅ TypeScript/Node.js implementation: Requires libymfm.wasm + speaker"
+        echo "  ✅ TypeScript/Node.js implementation: Requires libymfm.wasm (from npm) + speaker"
     fi
 else
     echo "ℹ️  To check requirements directly, clone ym2151-emulator-examples:"

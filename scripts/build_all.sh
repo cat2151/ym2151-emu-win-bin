@@ -32,15 +32,6 @@ else
     echo "⚠ Python build script not found"
 fi
 
-# TypeScript (requires Node.js environment)
-if [ -f "scripts/build_typescript.sh" ]; then
-    echo ""
-    echo "Building TypeScript library..."
-    bash scripts/build_typescript.sh || echo "⚠ TypeScript build skipped (Node.js required)"
-else
-    echo "⚠ TypeScript build script not found"
-fi
-
 echo ""
 echo "========================================="
 echo "All library builds completed!"

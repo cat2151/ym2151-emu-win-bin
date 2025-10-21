@@ -11,7 +11,7 @@
 
 ## ビルド対象ライブラリ
 
-### 1. Nuked-OPM
+### 1. Nuked-OPM（公式API）
 
 - **リポジトリ**: https://github.com/nukeykt/Nuked-OPM
 - **言語**: C
@@ -21,12 +21,27 @@
   - シンプルなC実装で、Rust/Go/Python/TypeScriptから利用可能
   - 静的リンクに対応
   - クロスコンパイルが容易
+  - **公式APIをそのまま提供**（カスタムラッパーなし）
+
+**公式API（opm.hより）**:
+```c
+typedef struct { /* ... */ } opm_t;
+void OPM_Reset(opm_t *chip);
+void OPM_Write(opm_t *chip, uint32_t port, uint8_t data);
+void OPM_Clock(opm_t *chip, int32_t *output, uint8_t *sh1, uint8_t *sh2, uint8_t *so);
+uint8_t OPM_Read(opm_t *chip, uint32_t port);
+// その他の関数...
+```
 
 **対応言語別のビルド方法**:
-- **Rust**: cc crateでコンパイルして静的ライブラリ (.a) を生成
-- **Go**: CGO経由で利用可能な静的ライブラリ (.a) を生成
-- **Python**: 動的ライブラリ (.dll) をビルドしてctypes経由で利用
-- **TypeScript/Node.js**: Native Addon (.node) または動的ライブラリ (.dll) を生成
+- **Rust**: cc crateでコンパイルして静的ライブラリ (`libnukedopm.a`) を生成
+  - 公式OPM_*関数をそのままエクスポート
+- **Go**: CGO経由で利用可能な静的ライブラリ (`libnukedopm.a`) を生成
+  - 公式OPM_*関数をそのままエクスポート
+- **Python**: 動的ライブラリ (`nukedopm.dll`) をビルドしてctypes経由で利用
+  - 公式OPM_*関数をそのままエクスポート
+- **TypeScript/Node.js**: Native Addon (`.node`) または動的ライブラリ (`.dll`) を生成
+  - 公式OPM_*関数をそのままエクスポート
 
 ### 2. libymfm (ymfm)
 
@@ -45,25 +60,32 @@
 - **Python**: pybind11またはC++ラッパーで動的ライブラリ (.dll) を生成
 - **TypeScript/Node.js**: Node.js N-APIでNative Addon (.node) を生成
 
-## ビルド成果物
+## ビルド成果物（公式Nuked-OPM API）
 
 各言語向けに以下の形式のライブラリファイルを生成：
 
 ### Rust
-- **ファイル形式**: `libym2151.a` (静的ライブラリ)
+- **ファイル形式**: `libnukedopm.a` (静的ライブラリ), `nukedopm.dll` (動的ライブラリ)
 - **用途**: Rustプロジェクトから直接リンク可能
+- **API**: 公式Nuked-OPM API（OPM_Reset, OPM_Write, OPM_Clock等）
 
 ### Go
-- **ファイル形式**: `libym2151.a` (静的ライブラリ)
+- **ファイル形式**: `libnukedopm.a` (静的ライブラリ)
 - **用途**: CGOから利用可能
+- **API**: 公式Nuked-OPM API（OPM_Reset, OPM_Write, OPM_Clock等）
 
 ### Python
-- **ファイル形式**: `ym2151.dll` (動的ライブラリ)
+- **ファイル形式**: `nukedopm.dll` (動的ライブラリ)
+- **レガシー**: `ym2151.dll` (後方互換性のため同じ内容を別名でも提供)
 - **用途**: ctypesでロード可能
+- **API**: 公式Nuked-OPM API（OPM_Reset, OPM_Write, OPM_Clock等）
 
 ### TypeScript/Node.js
 - **ファイル形式**: `ym2151.node` (Native Addon) または `ym2151.dll`
 - **用途**: require() でロード可能
+- **API**: 公式Nuked-OPM API（OPM_Reset, OPM_Write, OPM_Clock等）
+
+**重要**: すべてのライブラリは公式Nuked-OPM APIをそのまま提供します。カスタムラッパーは存在しません。
 
 ## 実装の優先順位
 
@@ -95,4 +117,9 @@ WSL2 (Ubuntu) から Windows向けライブラリをビルドするために、�
   - 静的ライブラリ (.a) の場合: mingw-w64のstatic linkingを使用
   - 動的ライブラリ (.dll) の場合: `-static-libgcc -static-libstdc++` フラグを使用
 
-- **ライブラリの静的ビルド**: Nuked-OPMやlibymfmを静的ライブラリ(.a)または独立したDLLとしてビルド
+- **ライブラリの静的ビルド**: Nuked-OPMを静的ライブラリ(.a)または独立したDLLとしてビルド
+
+- **公式APIの提供**: すべてのライブラリは公式Nuked-OPM APIをそのまま提供
+  - カスタムラッパーは存在しない
+  - 関数名、シグネチャはopm.hと完全に一致
+  - ユーザーは公式ドキュメントをそのまま参照可能

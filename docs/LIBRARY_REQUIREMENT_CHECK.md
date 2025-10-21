@@ -17,7 +17,7 @@
 ライブラリ名を、公式Nuked-OPMであることを明確にするため変更しました：
 - Rust: `libym2151.a` → `libnukedopm.a`
 - Go: `libym2151.a` → `libnukedopm.a`
-- Python: `ym2151.dll` → `nukedopm.dll` (後方互換性のため `ym2151.dll` も提供)
+- Python: `ym2151.dll` → `nukedopm.dll`
 
 **APIは変更ありません**。すべてのライブラリは公式Nuked-OPM APIをそのまま提供します。
 詳細は [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) および [OFFICIAL_API_ANALYSIS.md](OFFICIAL_API_ANALYSIS.md) を参照してください。
@@ -153,7 +153,6 @@
 | Rust | 動的ライブラリ | `nukedopm.dll` | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_rust.sh` |
 | Go | 静的ライブラリ | `libnukedopm.a` | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_go.sh` |
 | Python | 動的ライブラリ | `nukedopm.dll` | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_python.sh` |
-| Python | 動的ライブラリ | `ym2151.dll` (legacy) | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_python.sh` |
 | TypeScript/Node.js | Native Addon | `ym2151.node` | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_typescript.sh` |
 | Node.js | Native Addon | `binding.node` | - (PortAudio) | ✅ | - | `build-node-speaker.sh` |
 

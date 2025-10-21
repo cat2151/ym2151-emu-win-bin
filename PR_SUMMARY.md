@@ -17,14 +17,12 @@ Issue提起された問題:
 
 ### 1. ライブラリ名の変更
 
-| 言語 | 変更前 | 変更後 | 備考 |
-|------|--------|--------|------|
-| Rust | `libym2151.a` | `libnukedopm.a` | 新規ビルドのみ |
-| Rust | `ym2151.dll` | `nukedopm.dll` | 新規ビルドのみ |
-| Go | `libym2151.a` | `libnukedopm.a` | 新規ビルドのみ |
-| Python | `ym2151.dll` | `nukedopm.dll` | **後方互換性あり** |
-
-**重要**: Python は後方互換性のため `ym2151.dll` も引き続き提供
+| 言語 | 変更前 | 変更後 |
+|------|--------|--------|
+| Rust | `libym2151.a` | `libnukedopm.a` |
+| Rust | `ym2151.dll` | `nukedopm.dll` |
+| Go | `libym2151.a` | `libnukedopm.a` |
+| Python | `ym2151.dll` | `nukedopm.dll` |
 
 ### 2. コード修正
 
@@ -90,16 +88,12 @@ CI/CDパイプラインを新しいライブラリ名に対応:
 
 ## 影響範囲
 
-### Breaking Changes（Rust/Go）
+### Breaking Changes
 
 - **Rust**: ライブラリ名が変更（`libym2151.a` → `libnukedopm.a`）
 - **Go**: ライブラリ名が変更（`libym2151.a` → `libnukedopm.a`）
-- **影響**: リンカー設定の変更が必要（`-lym2151` → `-lnukedopm`）
-
-### Non-Breaking Changes（Python）
-
-- **Python**: `ym2151.dll` は引き続き提供（後方互換性）
-- **推奨**: 新規プロジェクトでは `nukedopm.dll` を使用
+- **Python**: ライブラリ名が変更（`ym2151.dll` → `nukedopm.dll`）
+- **影響**: ライブラリファイル名の参照を変更する必要があります
 
 ### API Changes
 
@@ -141,7 +135,7 @@ CI/CDパイプラインを新しいライブラリ名に対応:
 **ライブラリ名変更**:
 - Rust: `libnukedopm.a`, `nukedopm.dll`
 - Go: `libnukedopm.a`
-- Python: `nukedopm.dll` (推奨), `ym2151.dll` (legacy)
+- Python: `nukedopm.dll`
 
 **明確化**:
 - すべてのライブラリは公式Nuked-OPM APIを提供
@@ -155,12 +149,16 @@ CI/CDパイプラインを新しいライブラリ名に対応:
 
 #### 移行方法
 
-**Python**: コード変更不要（後方互換性あり）
-
 **Rust/Go**: リンカー設定を変更
 ```bash
 # 旧: -lym2151
 # 新: -lnukedopm
+```
+
+**Python**: ライブラリファイル名を変更
+```python
+# 旧: lib = ctypes.CDLL('./ym2151.dll')
+# 新: lib = ctypes.CDLL('./nukedopm.dll')
 ```
 
 **API**: 変更なし（公式Nuked-OPM APIそのまま）
@@ -184,7 +182,6 @@ CI/CDパイプラインを新しいライブラリ名に対応:
 ✅ 公式APIをそのまま提供していることを明確化
 ✅ 不要なwrapper宣言を削除
 ✅ 充実したドキュメント（922行追加）
-✅ 後方互換性維持（Python）
 ✅ すべてのIssue質問に回答
 
 このPRにより、ユーザーは：

@@ -147,7 +147,7 @@ void OPM_Clock(opm_t *chip, int32_t *output, uint8_t *sh1, uint8_t *sh2, uint8_t
 |------|----|----|
 | Rust | `libym2151.a` / `ym2151.dll` | `libnukedopm.a` / `nukedopm.dll` |
 | Go | `libym2151.a` | `libnukedopm.a` |
-| Python | `ym2151.dll` | `nukedopm.dll` + `ym2151.dll`(legacy) |
+| Python | `ym2151.dll` | `nukedopm.dll` |
 
 ### 2. Rustの `lib.rs` を修正
 
@@ -177,7 +177,6 @@ extern "C" {
 ### 4. GitHub Actionsを更新
 
 - ビルド成果物の名前を新しいライブラリ名に変更
-- Pythonは後方互換性のため両方をコミット
 
 ---
 
@@ -206,7 +205,7 @@ extern "C" {
 ### 今後
 
 - ✅ すべてのライブラリは公式Nuked-OPM APIを提供
-- ✅ ライブラリ名は `nukedopm` で統一（Pythonは後方互換性あり）
+- ✅ ライブラリ名は `nukedopm` で統一
 - ✅ ドキュメントで公式APIを提供していることを明記
 - ✅ ユーザーは公式opm.hを参照できる
 

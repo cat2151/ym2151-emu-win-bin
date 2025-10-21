@@ -238,7 +238,7 @@ export PATH=$PATH:/usr/local/go/bin
 
 - **Build Python Library** (`.github/workflows/build-python.yml`)
   - 実行環境: ubuntu-latest
-  - 出力: `binaries/python/nukedopm.dll`, `binaries/python/ym2151.dll` (legacy)
+  - 出力: `binaries/python/nukedopm.dll`
   - API: 公式OPM_*関数
 
 - **Build TypeScript/Node.js Library** (`.github/workflows/build-typescript.yml`)

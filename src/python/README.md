@@ -22,9 +22,6 @@ bash scripts/build_python.sh
 
 - `nukedopm.dll` - 動的ライブラリ（mingw DLL依存なし）
 
-**後方互換性のため**: ビルドスクリプトは `ym2151.dll` という名前でもコピーを作成します。
-ただし、新しいプロジェクトでは `nukedopm.dll` を使用することを推奨します。
-
 ## 前提条件
 
 - mingw-w64 (`x86_64-w64-mingw32-gcc`)

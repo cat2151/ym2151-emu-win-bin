@@ -76,7 +76,6 @@ uint8_t OPM_Read(opm_t *chip, uint32_t port);
 
 ### Python
 - **ファイル形式**: `nukedopm.dll` (動的ライブラリ)
-- **レガシー**: `ym2151.dll` (後方互換性のため同じ内容を別名でも提供)
 - **用途**: ctypesでロード可能
 - **API**: 公式Nuked-OPM API（OPM_Reset, OPM_Write, OPM_Clock等）
 

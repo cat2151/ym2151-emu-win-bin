@@ -4,12 +4,23 @@
 このドキュメントは、[ym2151-emulator-examples](https://github.com/cat2151/ym2151-emulator-examples)リポジトリが必要とするライブラリと、当リポジトリ(ym2151-emu-win-bin)が提供できるライブラリを突き合わせてチェックした結果です。
 
 **チェック実施日**: 2025-10-19
+**更新日**: 2025-10-21（ライブラリ名を公式Nuked-OPMに変更）
 
 ---
 
 ## 結論: 必要なライブラリを提供できています ✅
 
 当リポジトリは、ym2151-emulator-examplesが必要とする全ての主要ライブラリを提供できる体制を整えています。
+
+### 重要な変更（2025-10-21）
+
+ライブラリ名を、公式Nuked-OPMであることを明確にするため変更しました：
+- Rust: `libym2151.a` → `libnukedopm.a`
+- Go: `libym2151.a` → `libnukedopm.a`
+- Python: `ym2151.dll` → `nukedopm.dll` (後方互換性のため `ym2151.dll` も提供)
+
+**APIは変更ありません**。すべてのライブラリは公式Nuked-OPM APIをそのまま提供します。
+詳細は [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) および [OFFICIAL_API_ANALYSIS.md](OFFICIAL_API_ANALYSIS.md) を参照してください。
 
 ---
 
@@ -138,15 +149,19 @@
 
 ## 提供ライブラリ一覧
 
-### 当リポジトリが提供するライブラリ
+### 当リポジトリが提供するライブラリ（公式Nuked-OPM API）
 
-| 言語 | ライブラリ形式 | ファイル名 | エミュレータ | 静的リンク | ビルドスクリプト |
-|------|--------------|----------|------------|----------|--------------|
-| Rust | 静的ライブラリ | `libym2151.a` | Nuked-OPM | ✅ | `scripts/build_rust.sh` |
-| Go | 静的ライブラリ | `libym2151.a` | Nuked-OPM | ✅ | `scripts/build_go.sh` |
-| Python | 動的ライブラリ | `ym2151.dll` | Nuked-OPM | ✅ | `scripts/build_python.sh` |
-| TypeScript/Node.js | Native Addon | `ym2151.node` | Nuked-OPM | ✅ | `scripts/build_typescript.sh` |
-| Node.js | Native Addon | `binding.node` | - (PortAudio) | ✅ | `build-node-speaker.sh` |
+| 言語 | ライブラリ形式 | ファイル名 | エミュレータ | 静的リンク | API | ビルドスクリプト |
+|------|--------------|----------|------------|----------|-----|--------------|
+| Rust | 静的ライブラリ | `libnukedopm.a` | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_rust.sh` |
+| Rust | 動的ライブラリ | `nukedopm.dll` | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_rust.sh` |
+| Go | 静的ライブラリ | `libnukedopm.a` | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_go.sh` |
+| Python | 動的ライブラリ | `nukedopm.dll` | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_python.sh` |
+| Python | 動的ライブラリ | `ym2151.dll` (legacy) | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_python.sh` |
+| TypeScript/Node.js | Native Addon | `ym2151.node` | Nuked-OPM | ✅ | 公式OPM_* | `scripts/build_typescript.sh` |
+| Node.js | Native Addon | `binding.node` | - (PortAudio) | ✅ | - | `build-node-speaker.sh` |
+
+**重要**: すべてのライブラリは公式Nuked-OPM APIをそのまま提供します（カスタムラッパーなし）
 
 ### ym2151-emulator-examplesが必要とするライブラリ
 

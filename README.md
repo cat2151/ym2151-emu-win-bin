@@ -114,25 +114,20 @@ ym2151-emu-win-bin/
 │   ├── libraries.md               # 使用ライブラリのリスト
 │   ├── implementation_plan_rust.md
 │   ├── implementation_plan_go.md
-│   ├── implementation_plan_python.md
-│   ├── implementation_plan_typescript.md
-│   └── github_actions_plan.md     # GitHub Actions実装計画
+│   └── implementation_plan_python.md
 ├── src/
 │   ├── rust/                      # Rust用ライブラリビルド
 │   ├── go/                        # Go用ライブラリビルド
-│   ├── python/                    # Python用ライブラリビルド
-│   └── typescript_node/           # TypeScript/Node.js用ライブラリビルド
+│   └── python/                    # Python用ライブラリビルド
 ├── scripts/                       # ビルドスクリプト
 │   ├── build_rust.sh
 │   ├── build_go.sh
 │   ├── build_python.sh
-│   ├── build_typescript.sh
 │   └── build_all.sh
 ├── binaries/                      # ビルド済みライブラリバイナリ（GitHub Actions）
 │   ├── rust/
 │   ├── go/
-│   ├── python/
-│   └── typescript/
+│   └── python/
 └── .github/workflows/
     └── daily-build.yml           # 毎日のビルドワークフロー
 ```
@@ -159,9 +154,10 @@ ym2151-emu-win-bin/
 - **Rust**: `.a` (static library) または `.lib` (Windows static library)
 - **Go**: `.a` (static library) - CGO経由で利用
 - **Python**: `.dll` (dynamic library) - ctypes経由で利用
-- **TypeScript/Node.js**: `.dll` または `.node` (Native Addon)
 
 詳細は [docs/libraries.md](docs/libraries.md) を参照。
+
+**注意**: TypeScript/Node.js版は、libymfm.wasmがnpmパッケージとして提供されているため、このリポジトリでのビルドは不要です。
 
 ## ビルド方法
 
@@ -177,7 +173,6 @@ ym2151-emu-win-bin/
 ./scripts/build_rust.sh
 ./scripts/build_go.sh
 ./scripts/build_python.sh
-./scripts/build_typescript.sh
 ```
 
 ### 前提条件
@@ -218,10 +213,6 @@ export PATH=$PATH:/usr/local/go/bin
   - 実行環境: ubuntu-latest
   - 出力: `binaries/python/ym2151.dll`
 
-- **Build TypeScript/Node.js Library** (`.github/workflows/build-typescript.yml`)
-  - 実行環境: windows-latest
-  - 出力: `binaries/typescript/ym2151.node`
-
 ### ワークフロー分割のメリット
 
 1. **障害の局所化**: 1つのライブラリが失敗しても、他のライブラリのビルドは継続されます
@@ -238,7 +229,6 @@ GitHub Actionsページから各ワークフローを個別に手動実行でき
 - "Build Rust Library"
 - "Build Go Library"
 - "Build Python Library"
-- "Build TypeScript/Node.js Library"
 
 ## 実装計画
 
@@ -247,8 +237,6 @@ GitHub Actionsページから各ワークフローを個別に手動実行でき
 - [Rust用ライブラリビルド計画](docs/implementation_plan_rust.md)
 - [Go用ライブラリビルド計画](docs/implementation_plan_go.md)
 - [Python用ライブラリビルド計画](docs/implementation_plan_python.md)
-- [TypeScript/Node.js用ライブラリビルド計画](docs/implementation_plan_typescript.md)
-- [GitHub Actions実装計画](docs/github_actions_plan.md)
 
 ## ライブラリの使用方法
 
@@ -275,8 +263,8 @@ lib = ctypes.CDLL('./binaries/python/ym2151.dll')
 
 ### TypeScript/Node.js
 ```typescript
-// Native Addonまたはdllとしてロード
-const ym2151 = require('./binaries/typescript/ym2151.node');
+// libymfm.wasmを使用（npmパッケージとして提供）
+// npm install libymfm
 ```
 
 ## 開発ステータス
@@ -290,7 +278,6 @@ const ym2151 = require('./binaries/typescript/ym2151.node');
 - [ ] Rust用ライブラリビルド
 - [ ] Go用ライブラリビルド
 - [ ] Python用ライブラリビルド
-- [ ] TypeScript/Node.js用ライブラリビルド
 
 ## ライブラリ提供要件チェック
 
@@ -309,8 +296,9 @@ const ym2151 = require('./binaries/typescript/ym2151.node');
 | Rust | 静的ライブラリ (`.a`) | Nuked-OPM | ✅ |
 | Go | 静的ライブラリ (`.a`) | Nuked-OPM | ✅ |
 | Python | 動的ライブラリ (`.dll`) | Nuked-OPM | ✅ |
-| TypeScript/Node.js | Native Addon (`.node`) | Nuked-OPM | ✅ |
 | Node.js | Native Addon (`.node`) | PortAudio | ✅ |
+
+**注意**: TypeScript/Node.js向けYM2151エミュレータは、libymfm.wasmがnpmパッケージとして提供されているため、このリポジトリでのビルドは不要です。
 
 ## ライセンス
 

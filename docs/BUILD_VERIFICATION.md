@@ -19,12 +19,6 @@
 - `Makefile` - ビルド設定
 - `README.md` - ビルド手順とドキュメント
 
-### TypeScript/Node.js (src/typescript_node/)
-- `package.json` - npm パッケージ設定
-- `binding.gyp` - Native Addonビルド設定
-- `src/ym2151_addon.cc` - Native Addon実装
-- `README.md` - ビルド手順とドキュメント
-
 ## ビルドスクリプトの検証
 
 ### 構文チェック
@@ -34,7 +28,6 @@
 bash -n scripts/build_rust.sh
 bash -n scripts/build_go.sh
 bash -n scripts/build_python.sh
-bash -n scripts/build_typescript.sh
 bash -n scripts/build_all.sh
 ```
 
@@ -54,16 +47,6 @@ cd src/python && make -n
 cd src/rust && cargo read-manifest
 ```
 
-### Node.js設定の検証
-
-```bash
-# package.jsonの検証
-cd src/typescript_node && python3 -m json.tool package.json > /dev/null
-
-# binding.gypの検証
-cd src/typescript_node && python3 -m json.tool binding.gyp > /dev/null
-```
-
 ## ビルドの実行
 
 ### 前提条件
@@ -80,9 +63,6 @@ rustup target add x86_64-pc-windows-gnu
 
 # Go用（オプション）
 # Go自体はビルドに不要（静的ライブラリのみ生成）
-
-# Node.js用（TypeScriptのみ）
-# Node.jsとnpmが必要
 ```
 
 ### ビルドの実行方法
@@ -94,7 +74,6 @@ rustup target add x86_64-pc-windows-gnu
 bash scripts/build_rust.sh
 bash scripts/build_go.sh
 bash scripts/build_python.sh
-bash scripts/build_typescript.sh
 
 # すべてのビルド
 bash scripts/build_all.sh
@@ -141,18 +120,10 @@ ym2151-emu-win-bin/
     │   ├── ym2151.h
     │   ├── vendor/             # gitignore対象
     │   └── libym2151.a         # gitignore対象（ビルド成果物）
-    ├── python/                 # Python用ビルド設定
-    │   ├── Makefile
-    │   ├── vendor/             # gitignore対象
-    │   └── ym2151.dll          # gitignore対象（ビルド成果物）
-    └── typescript_node/        # TypeScript/Node.js用ビルド設定
-        ├── package.json
-        ├── binding.gyp
-        ├── src/
-        │   └── ym2151_addon.cc
+    └── python/                 # Python用ビルド設定
+        ├── Makefile
         ├── vendor/             # gitignore対象
-        ├── node_modules/       # gitignore対象
-        └── build/              # gitignore対象（ビルド成果物）
+        └── ym2151.dll          # gitignore対象（ビルド成果物）
 ```
 
 ## トラブルシューティング
@@ -173,7 +144,7 @@ TypeScript/Node.jsのビルドはWindows環境またはNode.jsがインストー
 ### vendor/nuked-opmが見つからない
 ビルドスクリプトが自動的にクローンします。手動でクローンする場合：
 ```bash
-cd src/rust  # または src/go, src/python, src/typescript_node
+cd src/rust  # または src/go, src/python
 mkdir -p vendor
 git clone https://github.com/nukeykt/Nuked-OPM.git vendor/nuked-opm
 ```
@@ -184,6 +155,5 @@ git clone https://github.com/nukeykt/Nuked-OPM.git vendor/nuked-opm
 - Rust: `src/rust/target/x86_64-pc-windows-gnu/release/libym2151.a`
 - Go: `src/go/libym2151.a`
 - Python: `src/python/ym2151.dll`
-- TypeScript: `src/typescript_node/build/Release/ym2151.node`
 
 各言語の詳しい利用方法は、各ディレクトリのREADME.mdを参照してください。

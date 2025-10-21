@@ -119,10 +119,6 @@
 - ⚠️ **libymfm.wasm**: 直接提供なし
   - libymfm.wasmはnpmパッケージとして配布されているため、ビルド不要
   - ym2151-emulator-examples側でnpmから直接利用可能
-- ✅ **代替: Nuked-OPM Native Addon**: 提供可能
-  - `src/typescript_node/` にビルド設定あり
-  - `scripts/build_typescript.sh` でビルド可能
-  - 成果物: `ym2151.node` (Native Addon)
 - ✅ **node-speaker関連**: 別途提供
   - リポジトリに `build-node-speaker.sh` あり
   - Windows向けnode-speakerビルド環境を提供
@@ -131,7 +127,7 @@
 #### 評価
 **✅ 十分に対応**: 
 - libymfm.wasmはnpmパッケージなので当リポジトリからの提供は不要
-- 代替としてNuked-OPMベースのNative Addonを提供可能
+- ym2151-emulator-examplesはlibymfm.wasmを使用しており、ユーザーは複雑なビルドをせずにnpmから直接利用可能
 - node-speaker (PortAudio) のビルド環境も提供
 
 ---
@@ -145,8 +141,9 @@
 | Rust | 静的ライブラリ | `libym2151.a` | Nuked-OPM | ✅ | `scripts/build_rust.sh` |
 | Go | 静的ライブラリ | `libym2151.a` | Nuked-OPM | ✅ | `scripts/build_go.sh` |
 | Python | 動的ライブラリ | `ym2151.dll` | Nuked-OPM | ✅ | `scripts/build_python.sh` |
-| TypeScript/Node.js | Native Addon | `ym2151.node` | Nuked-OPM | ✅ | `scripts/build_typescript.sh` |
 | Node.js | Native Addon | `binding.node` | - (PortAudio) | ✅ | `build-node-speaker.sh` |
+
+**注意**: TypeScript/Node.js向けYM2151エミュレータは、libymfm.wasmがnpmパッケージとして提供されているため、このリポジトリでのビルドは不要です。
 
 ### ym2151-emulator-examplesが必要とするライブラリ
 

@@ -263,6 +263,46 @@ GitHub Actionsページから各ワークフローを個別に手動実行でき
 - "Build Go Library"
 - "Build Python Library"
 
+## ビルド済みバイナリの使用方法
+
+ビルド済みのライブラリバイナリは `binaries/` ディレクトリに格納されており、以下の方法でアクセスできます：
+
+### 直接ダウンロード
+
+特定のバイナリをダウンロード：
+```bash
+# Python用DLL
+curl -L -o nukedopm.dll https://github.com/cat2151/ym2151-emu-win-bin/raw/main/binaries/python/nukedopm.dll
+
+# Rust用静的ライブラリ
+curl -L -o libnukedopm.a https://github.com/cat2151/ym2151-emu-win-bin/raw/main/binaries/rust/libnukedopm.a
+
+# Go用静的ライブラリ
+curl -L -o libnukedopm.a https://github.com/cat2151/ym2151-emu-win-bin/raw/main/binaries/go/libnukedopm.a
+```
+
+### Git Submoduleとして使用
+
+他のプロジェクトから参照する場合：
+```bash
+# サブモジュールとして追加
+git submodule add https://github.com/cat2151/ym2151-emu-win-bin.git vendor/ym2151-binaries
+
+# バイナリを参照
+# Rust: vendor/ym2151-binaries/binaries/rust/libnukedopm.a
+# Go:   vendor/ym2151-binaries/binaries/go/libnukedopm.a
+# Python: vendor/ym2151-binaries/binaries/python/nukedopm.dll
+```
+
+### リポジトリをクローン
+
+```bash
+git clone https://github.com/cat2151/ym2151-emu-win-bin.git
+# バイナリは binaries/ ディレクトリに配置されています
+```
+
+詳細は [binaries/README.md](binaries/README.md) を参照してください。
+
 ## 実装計画
 
 各言語の詳細なビルド計画は以下のドキュメントを参照：

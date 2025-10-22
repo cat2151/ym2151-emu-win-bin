@@ -16,15 +16,22 @@ npm-debug.log*
 Thumbs.db
 
 # IDE files
-# Build artifacts
+# Build artifacts (but allow binaries/ directory)
 *.exe
+*.o
+*.obj
+
+# Exclude binary files except in binaries/ directory
 *.dll
 *.so
 *.dylib
 *.a
 *.lib
-*.o
-*.obj
+!binaries/**/*.dll
+!binaries/**/*.so
+!binaries/**/*.dylib
+!binaries/**/*.a
+!binaries/**/*.lib
 
 # Vendor dependencies
 src/*/vendor/

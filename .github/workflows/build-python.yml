@@ -40,8 +40,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ym2151-python
-          path: src/python/ym2151.dll
+          name: nukedopm-python
+          path: src/python/nukedopm.dll
           retention-days: 30
       
       - name: Commit binaries
@@ -50,7 +50,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           mkdir -p binaries/python
-          cp src/python/ym2151.dll binaries/python/
+          cp src/python/nukedopm.dll binaries/python/
           git add binaries/python/
-          git diff --staged --quiet || git commit -m "🤖 Update Python library $(date +'%Y-%m-%d')"
+          git diff --staged --quiet || git commit -m "🤖 Update Nuked-OPM Python library $(date +'%Y-%m-%d')"
           git push

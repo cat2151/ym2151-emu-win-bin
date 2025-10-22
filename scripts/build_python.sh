@@ -2,7 +2,7 @@
 set -e
 
 echo "========================================="
-echo "Building Python YM2151 Library for Windows"
+echo "Building Nuked-OPM Library for Windows (Python)"
 echo "========================================="
 
 cd src/python
@@ -21,7 +21,7 @@ if [ -f "Makefile" ]; then
 else
     # 直接コンパイル
     echo "Building DLL directly..."
-    x86_64-w64-mingw32-gcc -shared -o ym2151.dll \
+    x86_64-w64-mingw32-gcc -shared -o nukedopm.dll \
         -static-libgcc -static-libstdc++ \
         -O3 \
         vendor/nuked-opm/opm.c
@@ -29,12 +29,13 @@ fi
 
 # 確認
 echo "Build completed!"
-ls -lh ym2151.dll
+ls -lh nukedopm.dll
 
 # DLL依存の確認
 echo "Checking DLL dependencies..."
-x86_64-w64-mingw32-objdump -p ym2151.dll | grep -i "dll" || echo "✓ No mingw DLL dependencies (static build successful)"
+x86_64-w64-mingw32-objdump -p nukedopm.dll | grep -i "dll" || echo "✓ No mingw DLL dependencies (static build successful)"
 
 echo "========================================="
-echo "Python library build finished successfully!"
+echo "Nuked-OPM library build finished successfully!"
+echo "Note: Exported functions use official Nuked-OPM API (OPM_Reset, OPM_Write, OPM_Clock, etc.)"
 echo "========================================="

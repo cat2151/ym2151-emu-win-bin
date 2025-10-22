@@ -1,11 +1,13 @@
 [package]
-name = "ym2151"
+name = "nukedopm"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "ym2151"
+name = "nukedopm"
 crate-type = ["staticlib", "cdylib"]  # 静的と動的両方
+# 注: このライブラリは公式Nuked-OPMをビルドしたものです
+#     公式API (OPM_Reset, OPM_Write, OPM_Clock等) がそのまま提供されます
 
 [build-dependencies]
 cc = "1.0"

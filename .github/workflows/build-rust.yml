@@ -46,10 +46,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ym2151-rust
+          name: nukedopm-rust
           path: |
-            src/rust/target/x86_64-pc-windows-gnu/release/libym2151.a
-            src/rust/target/x86_64-pc-windows-gnu/release/ym2151.dll
+            src/rust/target/x86_64-pc-windows-gnu/release/libnukedopm.a
+            src/rust/target/x86_64-pc-windows-gnu/release/nukedopm.dll
           retention-days: 30
       
       - name: Commit binaries
@@ -58,8 +58,8 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           mkdir -p binaries/rust
-          cp src/rust/target/x86_64-pc-windows-gnu/release/libym2151.a binaries/rust/ 2>/dev/null || true
-          cp src/rust/target/x86_64-pc-windows-gnu/release/ym2151.dll binaries/rust/ 2>/dev/null || true
+          cp src/rust/target/x86_64-pc-windows-gnu/release/libnukedopm.a binaries/rust/ 2>/dev/null || true
+          cp src/rust/target/x86_64-pc-windows-gnu/release/nukedopm.dll binaries/rust/ 2>/dev/null || true
           git add binaries/rust/
-          git diff --staged --quiet || git commit -m "🤖 Update Rust library $(date +'%Y-%m-%d')"
+          git diff --staged --quiet || git commit -m "🤖 Update Nuked-OPM Rust library $(date +'%Y-%m-%d')"
           git push

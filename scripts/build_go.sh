@@ -2,7 +2,7 @@
 set -e
 
 echo "========================================="
-echo "Building Go YM2151 Library for Windows"
+echo "Building Nuked-OPM Library for Windows (Go)"
 echo "========================================="
 
 cd src/go
@@ -22,18 +22,19 @@ else
     # 直接コンパイル
     echo "Building library directly..."
     x86_64-w64-mingw32-gcc -c -O3 -static-libgcc vendor/nuked-opm/opm.c -o opm.o
-    x86_64-w64-mingw32-ar rcs libym2151.a opm.o
+    x86_64-w64-mingw32-ar rcs libnukedopm.a opm.o
     rm -f opm.o
 fi
 
 # 確認
 echo "Build completed!"
-ls -lh libym2151.a
+ls -lh libnukedopm.a
 
 # シンボルの確認
-echo "Checking symbols in library..."
-x86_64-w64-mingw32-nm libym2151.a | grep OPM | head -5
+echo "Checking symbols in library (should see official Nuked-OPM functions)..."
+x86_64-w64-mingw32-nm libnukedopm.a | grep OPM | head -5
 
 echo "========================================="
-echo "Go library build finished successfully!"
+echo "Nuked-OPM library build finished successfully!"
+echo "Note: Exported functions use official Nuked-OPM API (OPM_Reset, OPM_Write, OPM_Clock, etc.)"
 echo "========================================="

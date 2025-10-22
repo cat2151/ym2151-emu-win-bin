@@ -39,10 +39,12 @@ jobs:
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: nukedopm-python
           path: src/python/nukedopm.dll
           retention-days: 30
+          if-no-files-found: warn
       
       - name: Commit binaries
         if: success()
@@ -50,7 +52,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           mkdir -p binaries/python
-          cp src/python/nukedopm.dll binaries/python/
+          cp src/python/nukedopm.dll binaries/python/ 2>/dev/null || true
           git add binaries/python/
           git diff --staged --quiet || git commit -m "🤖 Update Nuked-OPM Python library $(date +'%Y-%m-%d')"
           git push

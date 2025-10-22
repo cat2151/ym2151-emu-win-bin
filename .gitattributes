@@ -1,0 +1,6 @@
+# Binary files in binaries/ directory should be treated as binary
+binaries/**/*.dll binary
+binaries/**/*.so binary
+binaries/**/*.dylib binary
+binaries/**/*.a binary
+binaries/**/*.lib binary

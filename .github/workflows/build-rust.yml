@@ -45,12 +45,14 @@ jobs:
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: nukedopm-rust
           path: |
             src/rust/target/x86_64-pc-windows-gnu/release/libnukedopm.a
             src/rust/target/x86_64-pc-windows-gnu/release/nukedopm.dll
           retention-days: 30
+          if-no-files-found: warn
       
       - name: Commit binaries
         if: success()

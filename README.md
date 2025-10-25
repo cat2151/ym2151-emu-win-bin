@@ -1,105 +1,12 @@
 # ym2151-emu-win-bin
 
-Windows用のnode-speakerライブラリビルド環境
-
-[日本語ドキュメント](QUICKSTART.ja.md) | [アーキテクチャ解説（日本語）](ARCHITECTURE.ja.md) | [ライブラリ要件チェック](docs/LIBRARY_REQUIREMENT_CHECK.md) | [Library Requirements Check (EN)](docs/LIBRARY_REQUIREMENT_CHECK.en.md)
-
-## 概要
-
-このリポジトリは、Windows環境でnode-speakerライブラリをネイティブビルドするためのスクリプトとGitHub Actions ワークフローを提供します。
-
-用途:
-- Windows + Node.js + PortAudio + node-speaker + YM2151 emu
-
-## 特徴
-
-- MSYS2 mingw64環境でのネイティブビルド
-- mingwランタイムの静的リンク（static linking）
-- PortAudioの静的リンク
-- GitHub Actions による自動ビルド
-
-## ビルド方法
-
-### GitHub Actions でのビルド（推奨）
-
-1. このリポジトリをフォーク、またはクローン
-2. GitHub Actions の "Build node-speaker with Static Linking" ワークフローを実行
-3. ビルドされたアーティファクトをダウンロード
-
-### ローカルでのビルド（Windows + MSYS2）
-
-#### 前提条件
-
-1. MSYS2 をインストール: https://www.msys2.org/
-2. MSYS2 MINGW64 シェルを起動
-
-#### ビルド手順
-
-```bash
-# リポジトリをクローン
-git clone https://github.com/cat2151/ym2151-emu-win-bin.git
-cd ym2151-emu-win-bin
-
-# ビルドスクリプトを実行
-./build-node-speaker.sh
-```
-
-ビルドされたライブラリは `output/` ディレクトリに出力されます。
-
-## 出力ファイル
-
-- `output/binding.node` - ネイティブアドオン（PortAudio静的リンク済み）
-- `output/package.json` - node-speaker のパッケージ情報
-- `output/lib/` - node-speaker の JavaScript ライブラリ
-
-## 使用方法
-
-ビルドされた `binding.node` を既存の node-speaker パッケージに配置して使用します:
-
-```bash
-# Node.js プロジェクトに node-speaker をインストール
-npm install speaker
-
-# ビルドされた binding.node を配置
-cp output/binding.node node_modules/speaker/build/Release/
-```
-
-## トラブルシューティング
-
-### ビルドが失敗する場合
-
-1. MSYS2 のパッケージを更新:
-   ```bash
-   pacman -Syu
-   ```
-
-2. 必要なパッケージがインストールされているか確認:
-   ```bash
-   pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-portaudio mingw-w64-x86_64-pkg-config
-   ```
-
-3. Node.js のバージョンを確認（Node.js 18 推奨）
-
-### 実行時エラー
-
-静的リンクされているため、追加のDLLは不要です。エラーが発生する場合:
-- Node.js のバージョンがビルド時と一致しているか確認
-- binding.node ファイルが正しく配置されているか確認
-
-## ライセンス
-
-MIT License
-
-## 関連リンク
-
-- [node-speaker](https://github.com/TooTallNate/node-speaker)
-- [PortAudio](http://www.portaudio.com/)
-- [MSYS2](https://www.msys2.org/)
 Windows向け公式Nuked-OPMライブラリバイナリのビルドリポジトリ
 
+[ライブラリ要件チェック](docs/LIBRARY_REQUIREMENT_CHECK.md) | [Library Requirements Check (EN)](docs/LIBRARY_REQUIREMENT_CHECK.en.md)
+
 ## 概要
 
-このリポジトリは、**公式Nuked-OPM** (https://github.com/nukeykt/Nuked-OPM) YM2151エミュレータを、複数のプログラミング言語（Rust、Go、Python、TypeScript/Node.js）から利用可能な形式でビルドし、Windows向けのライブラリバイナリを生成します。
+このリポジトリは、**公式Nuked-OPM** (https://github.com/nukeykt/Nuked-OPM) YM2151エミュレータを、複数のプログラミング言語（Rust、Go、Python）から利用可能な形式でビルドし、Windows向けのライブラリバイナリを生成します。
 
 ### 重要: ラッパーではなく公式APIを提供
 
@@ -107,15 +14,12 @@ Windows向け公式Nuked-OPMライブラリバイナリのビルドリポジト�
 - 関数名: `OPM_Reset()`, `OPM_Write()`, `OPM_Clock()`, `OPM_Read()` など
 - 構造体: `opm_t`
 - シグネチャ: 公式opm.hと完全に一致
-このリポジトリは、Yamaha YM2151 (OPM) サウンドチップのエミュレータライブラリを、複数のプログラミング言語（Rust、Go、Python）から利用可能な形式でビルドし、Windows向けのライブラリバイナリを生成します。
 
 すべてのライブラリバイナリは以下の要件を満たします：
 - **公式API**: Nuked-OPMの公式APIをそのまま提供（ラッパーなし）
 - **静的リンク対応**: mingw DLLに依存しない `.a` (static library) または `.dll` (dynamic library) を生成
 - **言語バインディング対応**: Rust、Go、Pythonから利用可能
 - **クロスプラットフォームビルド**: WSL2からWindows向けにビルド可能
-
-**注意**: TypeScript/Node.js向けYM2151エミュレータは、libymfm.wasmがnpmパッケージとして提供されているため、このリポジトリでのビルドは不要です。
 
 ## ディレクトリ構造
 
@@ -165,11 +69,6 @@ ym2151-emu-win-bin/
   - 公式OPM_*関数をエクスポート
 - **Python**: `nukedopm.dll` (動的ライブラリ) - ctypes経由で利用
   - 公式OPM_*関数をエクスポート
-  - 後方互換性のため `ym2151.dll` も提供
-- **TypeScript/Node.js**: `.dll` または `.node` (Native Addon)
-- **Rust**: `.a` (static library) または `.lib` (Windows static library)
-- **Go**: `.a` (static library) - CGO経由で利用
-- **Python**: `.dll` (dynamic library) - ctypes経由で利用
 
 **すべてのライブラリが提供する関数（公式Nuked-OPM API）**:
 - `void OPM_Reset(opm_t *chip)`
@@ -179,8 +78,6 @@ ym2151-emu-win-bin/
 - その他の公式API関数
 
 詳細は [docs/libraries.md](docs/libraries.md) および [docs/OFFICIAL_API_ANALYSIS.md](docs/OFFICIAL_API_ANALYSIS.md) を参照。
-
-**注意**: TypeScript/Node.js版は、libymfm.wasmがnpmパッケージとして提供されているため、このリポジトリでのビルドは不要です。
 
 ## ビルド方法
 
@@ -240,11 +137,6 @@ export PATH=$PATH:/usr/local/go/bin
   - 実行環境: ubuntu-latest
   - 出力: `binaries/python/nukedopm.dll`
   - API: 公式OPM_*関数
-
-- **Build TypeScript/Node.js Library** (`.github/workflows/build-typescript.yml`)
-  - 実行環境: windows-latest
-  - 出力: `binaries/typescript/ym2151.node`
-  - API: 公式OPM_*関数（またはNative Addon wrapper）
 
 ### ワークフロー分割のメリット
 
@@ -331,13 +223,7 @@ git clone https://github.com/cat2151/ym2151-emu-win-bin.git
 ```python
 # ctypes経由でDLLをロード
 import ctypes
-lib = ctypes.CDLL('./binaries/python/ym2151.dll')
-```
-
-### TypeScript/Node.js
-```typescript
-// libymfm.wasmを使用（npmパッケージとして提供）
-// npm install libymfm
+lib = ctypes.CDLL('./binaries/python/nukedopm.dll')
 ```
 
 ## 開発ステータス
@@ -348,9 +234,9 @@ lib = ctypes.CDLL('./binaries/python/ym2151.dll')
 - [x] GitHub Actions実装計画書作成
 - [x] ビルドスクリプトの作成
 - [x] GitHub Actionsワークフローの作成
-- [ ] Rust用ライブラリビルド
-- [ ] Go用ライブラリビルド
-- [ ] Python用ライブラリビルド
+- [x] Rust用ライブラリビルド
+- [x] Go用ライブラリビルド
+- [x] Python用ライブラリビルド
 
 ## ライブラリ提供要件チェック
 
@@ -366,12 +252,9 @@ lib = ctypes.CDLL('./binaries/python/ym2151.dll')
 
 | 言語 | ライブラリ形式 | エミュレータ | 静的リンク |
 |------|--------------|------------|----------|
-| Rust | 静的ライブラリ (`.a`) | Nuked-OPM | ✅ |
+| Rust | 静的ライブラリ (`.a`) / 動的ライブラリ (`.dll`) | Nuked-OPM | ✅ |
 | Go | 静的ライブラリ (`.a`) | Nuked-OPM | ✅ |
 | Python | 動的ライブラリ (`.dll`) | Nuked-OPM | ✅ |
-| Node.js | Native Addon (`.node`) | PortAudio | ✅ |
-
-**注意**: TypeScript/Node.js向けYM2151エミュレータは、libymfm.wasmがnpmパッケージとして提供されているため、このリポジトリでのビルドは不要です。
 
 ## ライセンス
 

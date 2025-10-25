@@ -44,7 +44,9 @@ ym2151-emu-win-bin/
 │   ├── go/
 │   └── python/
 └── .github/workflows/
-    └── daily-build.yml           # 毎日のビルドワークフロー
+    ├── build-rust.yml             # Rustライブラリビルド
+    ├── build-go.yml               # Goライブラリビルド
+    └── build-python.yml           # Pythonライブラリビルド
 ```
 
 ## 使用ライブラリ
